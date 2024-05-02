@@ -1,0 +1,2 @@
+class QueueUser < ApplicationRecord
+end
