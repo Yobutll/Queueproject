@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   resources :admins
   resources :admin_controller, only: [:new, :create, :destroy]
 
+  post "admin/login", to: "admins_#check_login"
   post "/admin", to: "admin_controller#create"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

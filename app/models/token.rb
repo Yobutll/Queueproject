@@ -9,7 +9,7 @@ class Token < ApplicationRecord
 
     private
     def ensure_customer_is_token_user
-        if customer_id.present? && customer_id != tokens_user
+        if customer_id.present? && customer_id != tokenLineID
           errors.add(:customer_id, "must be equal to tokens_user")
         end
       end      

@@ -1,8 +1,11 @@
 class Admin < ApplicationRecord
     has_secure_password
     validates :username, presence: true, uniqueness: true
-    validates :password, presence: true
+    validates :password_digest, presence: true
     has_many :tokens
+
+
+    before_create :encrypt_pin_code
 
     def password=(p)
         @password = p
@@ -23,8 +26,6 @@ class Admin < ApplicationRecord
   end
 
   def encrypt_pin_code
-    if is_update.blank?
-      self.pin_code = encrypt(self.pin_code)
+      self.password_digest = encrypt(self.password_digest)
     end
-  end
 end
