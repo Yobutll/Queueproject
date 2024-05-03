@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_05_02_071111) do
+ActiveRecord::Schema[7.1].define(version: 2024_05_02_131118) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -31,11 +31,12 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_02_071111) do
     t.string "cusName"
     t.string "cusPhone"
     t.string "cusSeat"
-    t.string "cusStatus"
+    t.string "cusStatus", default: "1"
     t.string "cusTimeEnd"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "customer_id"
+    t.string "qNumber"
     t.index ["customer_id"], name: "index_queue_users_on_customer_id"
   end
 
