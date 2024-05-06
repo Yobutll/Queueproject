@@ -12,10 +12,12 @@ default: &default
   password: riseplus
   host: localhost
   port: 5432
+  timezone: Asia/Bangkok
 
 development:
   <<: *default
   database: Queueproject_development
+  timezone: Asia/Bangkok
 
 test:
   <<: *default
@@ -24,3 +26,4 @@ test:
 production:
   <<: *default
   database: queueproject_production
+  timezone: Asia/Bangkok

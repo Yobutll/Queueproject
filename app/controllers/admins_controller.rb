@@ -4,14 +4,16 @@ class AdminsController < ApplicationController
 
   # POST /admins
   def index
-    admin = Admin.all
-    render json: admins
+    admin = Admin.all # Get all users
+    render json: admins # Return all users
   end
 
   def show
-    admin = Admin.find_by(username: params[:username])
+    admin = Admin.find_by(username: params[:username]) # Find user by username
     if admin 
-      render json: admin
+      token = JsonWebToken.encode(admin_id: @admin.id)
+      save_token_to_database(admin.id, token)
+      render json: {location: admin, token: token}
     else
       render json: { error: 'Invalid username or password' }, status: :not_found
     end
@@ -23,21 +25,31 @@ class AdminsController < ApplicationController
     puts edmin
 
     @admin = Admin.new(admin_params)
-    if @admin.save
-      token = JsonWebToken.encode(admin_id: @admin.id)
-      cookies.signed[:jwt] = { value:  token, httponly: true }
-      render json: {status: :created, location: @admin, token: token}
+    if @admin.save # Save to database
+      token = JsonWebToken.encode(admin_id: @admin.id) # Generate token
+      save_token_to_database(@admin.id, token)
+      cookies.signed[:jwt] = { value:  token, httponly: true } # Set cookie httponly
+      render json: {status: :created, location: @admin, token: token} # Return token
     else
       # Password is incorrect or user not found
       render json: { error: 'Invalid username or password' }, status: :unauthorized
     end
   end
 
+
+  #Check login by compare encrypted password that user input with password_digest
   def check_login
+    edmin = Admin.encrypt(admin_params[:password_digest])
+    puts edmin
+
     encrypt_password = Admin.encrypt(params[:password_digest])
     @admin = Admin.find_by(username: params[:username], password_digest: encrypt_password)
     if @admin
-      render json: @admin
+      token = JsonWebToken.encode(admin_id: @admin.id)
+      save_token_to_database(@admin.id, token)
+      cookies.signed[:jwt] = { value:  token, httponly: true }
+      render json: {location: @admin, token: token}
+
     else
       # Password is incorrect or user not found
       render json: { error: 'Invalid username or password' }, status: :unauthorized
@@ -62,6 +74,11 @@ class AdminsController < ApplicationController
     # Only allow a list of trusted parameters through.
     def admin_params
       params.require(:admin).permit(:username, :password_digest)
+    end
+
+    # Save token and admin_id to the tokens table
+    def save_token_to_database(admin_id, token)
+      Token.create(admins_id: admin_id, tokenAdmin: token) # Save token and admin_id to the tokens table
     end
 end
   # POST /admins.json

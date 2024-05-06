@@ -28,4 +28,5 @@ class Admin < ApplicationRecord
   def encrypt_pin_code
       self.password_digest = encrypt(self.password_digest)
     end
+
 end

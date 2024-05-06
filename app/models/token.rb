@@ -2,8 +2,8 @@ class Token < ApplicationRecord
     belongs_to :customer, optional: true
     belongs_to :admin, optional: true
 
-    validates :customer_id, presence: true, unless: -> { admin_id.present? }
-    validates :admin_id, presence: true, unless: -> { customer_id.present? }
+    #validates :customer_id, presence: true, unless: -> { admin_id.present? }
+    #validates :admin_id, presence: true, unless: -> { customer_id.present? }
 
     after_validation :ensure_customer_is_token_user
 
