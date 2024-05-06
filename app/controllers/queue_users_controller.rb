@@ -11,7 +11,7 @@ class QueueUsersController < ApplicationController
   # GET /queue_users/1
   # GET /queue_users/1.json
   def show
-    queue = QueueUser.find_by_id(params[:id])
+    queue = QueueUser.find_by(customer_id: params[:customer_id])
     if queue
       render json: queue
     else
@@ -22,13 +22,15 @@ class QueueUsersController < ApplicationController
   # POST /queue_users
   # POST /queue_users.json
   def create
-    queue_u = QueueUser.new(queue_user_params)
-    if queue_u.save
-      render json:queue_u , status: :created
-      print"success"
+    if queue_user_params[:customer_id].present?
+      queue_u = QueueUser.new(queue_user_params)
+      if queue_u.save
+        render json: queue_u, status: :created
+      else
+        render json: queue_u.errors, status: :unprocessable_entity
+      end
     else
-      render json: queue_u.errors, status: :unprocessable_entity
-      print"fail"
+      render json: { error: 'customer_id is required' }, status: :unprocessable_entity
     end
   end
 
@@ -62,6 +64,6 @@ class QueueUsersController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def queue_user_params
-      params.require(:queue_user).permit(:cusName, :cusPhone, :cusSeat, :customer_id, :cusStatus )
+      params.require(:queue_user).permit(:cusName, :cusPhone, :cusSeat, :customer_id, :cusStatus ,:qNumber )
     end
 end
