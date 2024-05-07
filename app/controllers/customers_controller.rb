@@ -2,15 +2,10 @@ class CustomersController < ApplicationController
   skip_before_action :verify_authenticity_token
   # GET /customers
   # GET /customers.json
+
   def index
-    customers_with_queues = Customer.joins(:queue_u).select('customers.*, queue_us.queue_number, queue_us.status_id, queue_us.queue_finish_at')
-    if customers_with_queues.any?
-      puts "Join between Customer and QueueU has been successful."
-    else
-      puts "No records found after joining Customer and QueueU."
-    end
-    @customers = Customer.all
-    render json: customers_with_queues
+    customers = Customer.all
+    render json: customers
   end
 
   # GET /customers/1
@@ -27,10 +22,12 @@ class CustomersController < ApplicationController
   # POST /customers
   # POST /customers.json
   def create
+    newq = customer_params[:tokenNew]
     customer = Customer.new(customer_params)
-
     if customer.save
+      # queue = QueueUser.find_by(customer_id: customer.id)
       render json: customer, status: :created
+      puts newq
     else
       render json: customer.errors, status: :unprocessable_entity
     end
@@ -68,6 +65,6 @@ class CustomersController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def customer_params
-      params.fetch(:customer, {})
+      params.require(:customer).permit(:uidLine, queueNew: [:cusName, :cusPhone, :cusSeat], tokenNew: [:tokenLineID])
     end
 end

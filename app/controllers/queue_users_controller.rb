@@ -11,7 +11,7 @@ class QueueUsersController < ApplicationController
   # GET /queue_users/1
   # GET /queue_users/1.json
   def show
-    queue = QueueU.find_by_id(params[:id])
+    queue = QueueUser.find_by(customer_id: params[:customer_id])
     if queue
       render json: queue
     else
@@ -22,22 +22,23 @@ class QueueUsersController < ApplicationController
   # POST /queue_users
   # POST /queue_users.json
   def create
-    queue_u = QueueU.new(queue_u_params)
-
-    if queue_u.save
-      render json:queue_u , status: :created
-      print"success"
+    if queue_user_params[:customer_id].present?
+      queue_u = QueueUser.new(queue_user_params)
+      if queue_u.save
+        render json: queue_u, status: :created
+      else
+        render json: queue_u.errors, status: :unprocessable_entity
+      end
     else
-      render json: queue_u.errors, status: :unprocessable_entity
-      print"fail"
+      render json: { error: 'customer_id is required' }, status: :unprocessable_entity
     end
   end
 
   # PATCH/PUT /queue_users/1
   # PATCH/PUT /queue_users/1.json
   def update
-    queue_u = QueueU.find_by_id(params[:id])
-    if queue_u.update(queue_u_params)
+    queue_u = QueueUser.find_by_id(params[:id])
+    if queue_u.update(queue_user_params)
       render json:queue_u, status: :ok
     else
       render json: queue_u.errors
@@ -47,7 +48,7 @@ class QueueUsersController < ApplicationController
   # DELETE /queue_users/1
   # DELETE /queue_users/1.json
   def destroy
-    queue = QueueU.find_by_id(params[:id])
+    queue = QueueUser.find_by_id(params[:id])
     if queue.destroy
       render json: { message: 'Queue was successfully destroyed' }
     else
@@ -63,6 +64,6 @@ class QueueUsersController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def queue_user_params
-      params.fetch(:queue_user, {})
+      params.require(:queue_user).permit(:cusName, :cusPhone, :cusSeat, :customer_id, :cusStatus ,:qNumber )
     end
 end

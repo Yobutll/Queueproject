@@ -29,6 +29,9 @@ gem "jbuilder"
 gem 'bcrypt', '~> 3.1.7'
 gem "jwt"
 gem "simple_command"
+gem 'stripe'
+gem 'line-bot-api'
+gem 'sinatra'
 # Use Redis adapter to run Action Cable in production
 # gem "redis", ">= 4.0.1"
 
