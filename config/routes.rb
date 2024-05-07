@@ -5,7 +5,19 @@ Rails.application.routes.draw do
   resources :admins
   resources :admin_controller, only: [:new, :create, :destroy]
 
-  post "/admin", to: "admin_controller#create"
+
+  #set route 
+  # Token
+  get "tokens", to: "tokens_#index"
+  post "tokens", to: "tokens_#create"
+  put "tokens/:id", to: "tokens_#update"
+  delete "tokens/:id", to: "tokens_#destroy"
+  # Admin
+  get "admin", to: "admins_#index"
+  post "admin/login", to: "admins_#check_login"
+  post "/admins", to: "admin_controller#create"
+  post "/admin/show", to: "admins_#show"
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

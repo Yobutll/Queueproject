@@ -1,15 +1,24 @@
 class TokensController < ApplicationController
+  skip_before_action :verify_authenticity_token
   before_action :set_token, only: %i[ show update destroy ]
+  before_action :authenticate_request, except: [:create]
 
   # GET /tokens
   # GET /tokens.json
   def index
     @tokens = Token.all
+    render json: @tokens
   end
 
   # GET /tokens/1
   # GET /tokens/1.json
   def show
+    tokenAdmin = Token.find_by(token_id: params[:token_id])
+    if tokenAdmin
+      render json: {location: @token, token: tokenAdmin}
+    else
+      render json: { error: 'Invalid token' }, status: :not_found
+    end
   end
 
   # POST /tokens
