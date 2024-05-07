@@ -3,8 +3,6 @@ class Admin < ApplicationRecord
     validates :username, presence: true, uniqueness: true
     validates :password_digest, presence: true
     has_many :tokens
-
-
     before_create :encrypt_pin_code
 
     def password=(p)

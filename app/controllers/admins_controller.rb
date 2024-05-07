@@ -21,9 +21,6 @@ class AdminsController < ApplicationController
   end
 
   def create
-    edmin = Admin.encrypt(admin_params[:password_digest])
-    puts edmin
-
     @admin = Admin.new(admin_params)
     if @admin.save # Save to database
       creation_time = Time.now
@@ -41,9 +38,6 @@ class AdminsController < ApplicationController
 
   #Check login by compare encrypted password that user input with password_digest
   def check_login
-    edmin = Admin.encrypt(admin_params[:password_digest])
-    puts edmin
-
     encrypt_password = Admin.encrypt(params[:password_digest])
     @admin = Admin.find_by(username: params[:username], password_digest: encrypt_password)
     if @admin
