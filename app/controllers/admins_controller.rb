@@ -5,7 +5,7 @@ class AdminsController < ApplicationController
   # POST /admins
   def index
     admin = Admin.all # Get all users
-    render json: admins # Return all users
+    render json: admin # Return all users
   end
 
   def show
@@ -26,10 +26,12 @@ class AdminsController < ApplicationController
 
     @admin = Admin.new(admin_params)
     if @admin.save # Save to database
-      token = JsonWebToken.encode(admin_id: @admin.id) # Generate token
-      save_token_to_database(@admin.id, token)
+      creation_time = Time.now
+      expiration_time = creation_time + 24.hours # Set expiration time
+      token = JsonWebToken.encode(admin_id: @admin.id, exp: expiration_time.to_i) # Generate token
+      save_token_to_database(@admin.id, token, expiration_time) # Save token, expired and admin_id to the tokens table
       cookies.signed[:jwt] = { value:  token, httponly: true } # Set cookie httponly
-      render json: {status: :created, location: @admin, token: token} # Return token
+      render json: {status: :created, location: @admin, token: token, expires_at: expiration_time} # Return token
     else
       # Password is incorrect or user not found
       render json: { error: 'Invalid username or password' }, status: :unauthorized
@@ -77,8 +79,8 @@ class AdminsController < ApplicationController
     end
 
     # Save token and admin_id to the tokens table
-    def save_token_to_database(admin_id, token)
-      Token.create(admins_id: admin_id, tokenAdmin: token) # Save token and admin_id to the tokens table
+    def save_token_to_database(admin_id, token, expiration_time)
+      Token.create(admins_id: admin_id, tokenAdmin: token, expiredAdmin: expiration_time) # Save token and admin_id to the tokens table
     end
 end
   # POST /admins.json
