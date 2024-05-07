@@ -22,13 +22,12 @@ class CustomersController < ApplicationController
   # POST /customers
   # POST /customers.json
   def create
-    queueNew = params[:queueNew]
-    customer = Customer.new(customer_params.except(:queueNew))
+    newq = customer_params[:tokenNew]
+    customer = Customer.new(customer_params)
     if customer.save
-      customer.queueNew = queueNew 
-      customer.save_queue
+      # queue = QueueUser.find_by(customer_id: customer.id)
       render json: customer, status: :created
-      
+      puts newq
     else
       render json: customer.errors, status: :unprocessable_entity
     end
@@ -66,6 +65,6 @@ class CustomersController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def customer_params
-      params.require(:customer).permit(:uidLine, queueNew: [:cusName, :cusPhone, :cusSeat])
+      params.require(:customer).permit(:uidLine, queueNew: [:cusName, :cusPhone, :cusSeat], tokenNew: [:tokenLineID])
     end
 end

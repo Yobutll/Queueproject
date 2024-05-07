@@ -17,8 +17,22 @@ class QueueUser < ApplicationRecord
     end
 
     def set_qNumber
-        max_qNumber = QueueUser.maximum(:qNumber).to_i || 0
-        self.qNumber = (max_qNumber + 1).to_s
+      max_qNumber = QueueUser.all.sort_by { |q| [q.qNumber[0], q.qNumber[1..-1].to_i] }.last&.qNumber
+      if max_qNumber
+        letter = max_qNumber[/[A-Za-z]+/] || "A"
+        number = max_qNumber[/\d+/].to_i
+        number += 1
+        if number == 999
+          letter = letter.next
+          number = 1
+        end
+        if letter == "Z" && number == 999
+          letter = "A"
+        end
+        self.qNumber = letter + number.to_s.rjust(3, '00')
+      else
+        self.qNumber = "A001"
+      end
     end
 
     def set_queue_finish_at
