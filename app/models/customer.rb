@@ -15,9 +15,7 @@ class Customer < ApplicationRecord
             puts queueNew.inspect
           end
           end
-          
           puts "Queue saved"
-      
       end 
 
 
@@ -28,5 +26,5 @@ class Customer < ApplicationRecord
             tok.save
           end
         end
-      
+  
 end

@@ -4,7 +4,7 @@ Rails.application.routes.draw do
   resources :customers
   resources :admins
   resources :admin_controller, only: [:new, :create, :destroy]
-
+  resources :WebhooksController, only: [:receive]
   post "/admin", to: "admin_controller#create"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
