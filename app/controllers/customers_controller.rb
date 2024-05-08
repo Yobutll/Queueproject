@@ -1,70 +1,69 @@
-class CustomersController < ApplicationController
-  skip_before_action :verify_authenticity_token
-  # GET /customers
-  # GET /customers.json
+class QueueUsersController < ApplicationController
+  #skip_before_action :verify_authenticity_token
 
+  # GET /queue_users
+  # GET /queue_users.json
   def index
-    customers = Customer.all
-    render json: customers
+    @queue_users = QueueUser.all
+    render json: @queue_users
   end
 
-  # GET /customers/1
-  # GET /customers/1.json
+  # GET /queue_users/1
+  # GET /queue_users/1.json
   def show
-    customer = Customer.find_by_id(params[:id])
-    if customer
-      render json: customer
+    queue = QueueUser.find_by(customer_id: params[:customer_id])
+    if queue
+      render json: queue
     else
-      render json: { error: 'Customer not found' }, status: :not_found
+      render json: { error: 'Queue not found' }, status: :not_found
     end
   end
 
-  # POST /customers
-  # POST /customers.json
+  # POST /queue_users
+  # POST /queue_users.json
   def create
-    newq = customer_params[:tokenNew]
-    customer = Customer.new(customer_params)
-    if customer.save
-      # queue = QueueUser.find_by(customer_id: customer.id)
-      render json: customer, status: :created
-      puts newq
+    if queue_user_params[:customer_id].present?
+      queue_u = QueueUser.new(queue_user_params)
+      if queue_u.save
+        render json: queue_u, status: :created
+      else
+        render json: queue_u.errors, status: :unprocessable_entity
+      end
     else
-      render json: customer.errors, status: :unprocessable_entity
+      render json: { error: 'customer_id is required' }, status: :unprocessable_entity
     end
   end
 
-  # PATCH/PUT /customers/1
-  # PATCH/PUT /customers/1.json
+  # PATCH/PUT /queue_users/1
+  # PATCH/PUT /queue_users/1.json
   def update
-    customer = Customer.find_by_id(params[:id])
-    if customer.update(customer_params)
-      render json:customer , status: :ok
+    queue_u = QueueUser.find_by_id(params[:id])
+    if queue_u.update(queue_user_params)
+      render json:queue_u, status: :ok
     else
-      render json: @customer.errors, status: :unprocessable_entity
+      render json: queue_u.errors
     end
   end
 
-  # DELETE /customers/1
-  # DELETE /customers/1.json
-  
+  # DELETE /queue_users/1
+  # DELETE /queue_users/1.json
   def destroy
-      customer = Customer.find_by_id(params[:id])
-    if customer.destroy
-      render json: { message: 'Customer was successfully destroyed' }
+    queue = QueueUser.find_by_id(params[:id])
+    if queue.destroy
+      render json: { message: 'Queue was successfully destroyed' }
     else
-      render json: { error: 'Customer not found' }, status: :not_found
+      render json: { error: 'Queue not found' }, status: :not_found
     end
   end
-
+  
   private
-
     # Use callbacks to share common setup or constraints between actions.
-    def set_customer
-      @customer = Customer.find(params[:id])
+    def set_queue_user
+      @queue_user = QueueUser.find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.
-    def customer_params
-      params.require(:customer).permit(:uidLine, queueNew: [:cusName, :cusPhone, :cusSeat], tokenNew: [:tokenLineID])
+    def queue_user_params
+      params.require(:queue_user).permit(:cusName, :cusPhone, :cusSeat, :customer_id, :cusStatus ,:qNumber )
     end
 end

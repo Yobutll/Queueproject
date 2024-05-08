@@ -15,8 +15,10 @@ Rails.application.routes.draw do
   # Admin
   get "admin", to: "admins_#index"
   post "admin/login", to: "admins_#check_login"
-  post "/admins", to: "admin_controller#create"
+  #post "/admins", to: "admin_controller#create"
   post "/admin/show", to: "admins_#show"
+  post "/auth/login", to: "authentication#login"
+  
 
   resources :WebhooksController, only: [:receive]
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

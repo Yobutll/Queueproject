@@ -3,8 +3,8 @@ class CreateTokens < ActiveRecord::Migration[7.1]
     create_table :tokens do |t|
       t.string :tokenLineID
       t.string :tokenAdmin
-      t.string :expiredLine
-      t.string :expiredAdmin
+      t.datetime :expiredLine
+      t.datetime :expiredAdmin
       t.timestamps
     end
   end

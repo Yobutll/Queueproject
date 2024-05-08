@@ -1,9 +1,11 @@
 class Admin < ApplicationRecord
+
     has_secure_password
     validates :username, presence: true, uniqueness: true
-    validates :password_digest, presence: true
+    validates :password, presence: true
+    #validates :password_digest, presence: true
     has_many :tokens
-    before_create :encrypt_pin_code
+    after_create :encrypt_pin_code
 
     def password=(p)
         @password = p
