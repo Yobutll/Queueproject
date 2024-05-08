@@ -15,9 +15,13 @@ Rails.application.routes.draw do
   # Admin
   get "admin", to: "admins_#index"
   post "admin/login", to: "admins_#check_login"
-  #post "/admins", to: "admin_controller#create"
+  post "/admins", to: "admins_#create"
   post "/admin/show", to: "admins_#show"
+  # Authentication
   post "/auth/login", to: "authentication#login"
+  post "/auth/req", to: "application#authenticate_request"
+  # Customer
+  post "/customers", to: "customers_#create"
   
 
   resources :WebhooksController, only: [:receive]

@@ -1,69 +1,81 @@
-class QueueUsersController < ApplicationController
+class CustomersController < ApplicationController
   #skip_before_action :verify_authenticity_token
+  # GET /customers
+  # GET /customers.json
 
-  # GET /queue_users
-  # GET /queue_users.json
   def index
-    @queue_users = QueueUser.all
-    render json: @queue_users
+    customers = Customer.all
+    render json: customers
   end
 
-  # GET /queue_users/1
-  # GET /queue_users/1.json
+  # GET /customers/1
+  # GET /customers/1.json
   def show
-    queue = QueueUser.find_by(customer_id: params[:customer_id])
-    if queue
-      render json: queue
+    customer = Customer.find_by_id(params[:id])
+    if customer
+      render json: customer
     else
-      render json: { error: 'Queue not found' }, status: :not_found
+      render json: { error: 'Customer not found' }, status: :not_found
     end
   end
 
-  # POST /queue_users
-  # POST /queue_users.json
+  # POST /customers
+  # POST /customers.json
   def create
-    if queue_user_params[:customer_id].present?
-      queue_u = QueueUser.new(queue_user_params)
-      if queue_u.save
-        render json: queue_u, status: :created
+    customer = Customer.new(customer_params)
+    if customer.save
+      creation_time = Time.now
+      expiration_time = creation_time + 24.hours # Set expiration time
+    # Access token parameters directly from customer_params
+      token_line_id = customer_params[:tokenNew].first[:tokenLineID]
+    # Assuming you have defined a has_many association in your Customer model
+    # If not, replace 'tokens' with the appropriate association name
+      token = customer.tokens.build(tokenLineID: token_line_id, expiredLine: expiration_time)
+      if token.save
+        render json: { status: :created, location: customer, token: token.tokenLineID, expires_at: expiration_time }
       else
-        render json: queue_u.errors, status: :unprocessable_entity
+        render json: { error: 'Failed to save token' }, status: :unprocessable_entity
       end
     else
-      render json: { error: 'customer_id is required' }, status: :unprocessable_entity
+      render json: customer.errors, status: :unprocessable_entity
     end
   end
 
-  # PATCH/PUT /queue_users/1
-  # PATCH/PUT /queue_users/1.json
+
+  # PATCH/PUT /customers/1
+  # PATCH/PUT /customers/1.json
   def update
-    queue_u = QueueUser.find_by_id(params[:id])
-    if queue_u.update(queue_user_params)
-      render json:queue_u, status: :ok
+    customer = Customer.find_by_id(params[:id])
+    if customer.update(customer_params)
+      render json:customer , status: :ok
     else
-      render json: queue_u.errors
+      render json: @customer.errors, status: :unprocessable_entity
     end
   end
 
-  # DELETE /queue_users/1
-  # DELETE /queue_users/1.json
+  # DELETE /customers/1
+  # DELETE /customers/1.json
+  
   def destroy
-    queue = QueueUser.find_by_id(params[:id])
-    if queue.destroy
-      render json: { message: 'Queue was successfully destroyed' }
+      customer = Customer.find_by_id(params[:id])
+    if customer.destroy
+      render json: { message: 'Customer was successfully destroyed' }
     else
-      render json: { error: 'Queue not found' }, status: :not_found
+      render json: { error: 'Customer not found' }, status: :not_found
     end
   end
-  
+
   private
+
     # Use callbacks to share common setup or constraints between actions.
-    def set_queue_user
-      @queue_user = QueueUser.find(params[:id])
+    def set_customer
+      @customer = Customer.find(params[:id])
     end
 
     # Only allow a list of trusted parameters through.
-    def queue_user_params
-      params.require(:queue_user).permit(:cusName, :cusPhone, :cusSeat, :customer_id, :cusStatus ,:qNumber )
+    def customer_params
+      params.require(:customer).permit(:uidLine, queueNew: [:cusName, :cusPhone, :cusSeat], tokenNew: [:tokenLineID])
     end
+
+    
 end

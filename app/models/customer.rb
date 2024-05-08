@@ -14,9 +14,9 @@ class Customer < ApplicationRecord
             obj.save
             puts queueNew.inspect
           end
-          end
+        end
           puts "Queue saved"
-      end 
+    end 
 
 
     def save_token
@@ -24,7 +24,7 @@ class Customer < ApplicationRecord
             tok = Token.new(tokenNew)
             tok.customer_id = self.id
             tok.save
-          end
         end
+    end
   
 end
