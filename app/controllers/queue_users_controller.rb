@@ -1,6 +1,6 @@
 class QueueUsersController < ApplicationController
-  #skip_before_action :verify_authenticity_token
-
+  skip_before_action :verify_authenticity_token
+  
   # GET /queue_users
   # GET /queue_users.json
   def index
@@ -42,6 +42,7 @@ class QueueUsersController < ApplicationController
       render json:queue_u, status: :ok
     else
       render json: queue_u.errors
+      puts queue_u.error.full_messages
     end
   end
 

@@ -4,10 +4,11 @@ Rails.application.routes.draw do
   resources :customers
   resources :admins
   resources :admin_controller, only: [:new, :create, :destroy]
-
+  
 
   #set route 
   # Token
+  post "webhooks", to: "webhooks#webhook"
   get "tokens", to: "tokens_#index"
   post "tokens", to: "tokens_#create"
   put "tokens/:id", to: "tokens_#update"
@@ -18,7 +19,8 @@ Rails.application.routes.draw do
   post "/admins", to: "admin_controller#create"
   post "/admin/show", to: "admins_#show"
 
-  resources :WebhooksController, only: [:receive]
+  resources :webhooks_controller, only: [:create]
+  post "webhooks", to: "webhooks#create"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

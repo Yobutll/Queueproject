@@ -1,80 +1,105 @@
 class WebhooksController < ApplicationController
     skip_before_action :verify_authenticity_token
+   
+require 'sinatra'
+require 'line/bot'
+require 'dotenv/load'
+require 'base64'
+require 'openssl'
+require 'pg'
+require 'faraday'
+require 'json'
+
+Dotenv.load
+def get_db_connection
+  conn = PG.connect(dbname: 'Queueproject_development', user: 'riseplus', password: 'riseplus')
+  return conn
+end
+
+
+def get_previous_queue_users_count(customer_data)
+  conn = get_db_connection
+  result = conn.exec_params('SELECT COUNT(*) FROM queue_users WHERE "queue_users"."cusStatus" = $1 AND id < $2', ['1', customer_data["id"]])
+  count = result.getvalue(0, 0).to_i
+  count
+end
+
+def get_customer_data(uid)
+  conn = get_db_connection
+  result = conn.exec_params('SELECT * FROM customers INNER JOIN queue_users ON customers.id = queue_users.customer_id WHERE customers."uidLine" = $1', [uid])
+  customer_data = nil
+  result.each do |row|
+    customer_data = row
+  end
+  customer_data
+end
+
+def client
+  @client ||= Line::Bot::Client.new { |config|
+    config.channel_id = ENV["LINE_CHANNEL_ID"]
+    config.channel_secret = ENV["LINE_CHANNEL_SECRET"]
+    config.channel_token = ENV["LINE_CHANNEL_TOKEN"]
+  }
+end
+
+def webhook
+    http_request_body = request.body.read # Request body string
+    # Extract signature from request header
+    received_signature = request.env['HTTP_X_LINE_SIGNATURE']
+    # Compute HMAC-SHA256 digest
+    digest = OpenSSL::HMAC.digest(OpenSSL::Digest::SHA256.new, ENV["LINE_CHANNEL_SECRET"], http_request_body)
     
-    def receive
-        event = Stripe::Event.construct_from(params.to_unsafe_h)
-    
-        # Handle the event
+    if http_request_body.nil? || http_request_body.empty?
+        puts "OK"
+        status 200
+        return
+    end
+    computed_signature = Base64.strict_encode64(digest)
+    # Compare received signature and computed signature
+    if received_signature == computed_signature
         begin
-          case event.type
-          when 'payment_intent.succeeded'
-            handle_payment_succeeded(event.data.object)
-          when 'payment_intent.payment_failed'
-            handle_payment_failed(event.data.object)
-          else
-            raise "Unhandled event type: #{event.type}"
-          end
-        rescue StandardError => e
-          render json: { error: e.message }, status: :unprocessable_entity
-        end
-    
-        render json: { message: 'Webhook received successfully' }, status: :ok
-      end
-    
-      private
-    
-        def handle_payment_succeeded(payment_intent)
-            # Find the user associated with the payment
-            user = User.find_by(stripe_customer_id: payment_intent.customer)
-    
-            # Check if the payment covers any outstanding invoices
-            invoices = user.invoices.unpaid
-            invoices.each do |invoice|
-                if invoice.amount_due <= payment_intent.amount_received
-                invoice.update(status: 'paid', paid_at: Time.now)
-                payment_intent.amount_received -= invoice.amount_due
+        events = client.parse_events_from(http_request_body)
+        events.each do |event|
+            # Your event handling code here
+            uid_line = event['source']['userId']
+            customer_data = get_customer_data(uid_line)
+            case event
+            when Line::Bot::Event::Message
+            case event.type
+            when Line::Bot::Event::MessageType::Text
+            if customer_data.nil? && event.message['text'].include?("ติดตามสถานะ")
+                message = {
+                    type: 'text',
+                    text: "กรุณาจองคิวก่อนครับ"
+            }
+            client.reply_message(event['replyToken'], message)
+            else
+                queue = get_previous_queue_users_count(customer_data)
+                if event.message['text'].include?("ติดตามสถานะ")
+                message = {
+                    type: 'text',
+                    text: "มีคิวก่อนหน้าคุณ#{queue}คิว"
+                }
+                client.reply_message(event['replyToken'], message)
+            
+                
                 end
             end
-    
-            # Create a new payment record
-            payment = Payment.create(
-                user: user,
-                amount: payment_intent.amount_received,
-                payment_method: payment_intent.payment_method,
-                payment_intent_id: payment_intent.id,
-                status: payment_intent.status,
-                paid_at: payment_intent.created
-            )
-    
-            # Send a confirmation email to the user
-            UserMailer.payment_received(user, payment).deliver_later
-            rescue => e
-             Rails.logger.error("Error handling payment failed webhook: #{e}")
-        end
-    
-        def handle_payment_failed(payment_intent)
-            # Find the user associated with the payment
-            user = User.find_by(stripe_customer_id: payment_intent.customer)
-    
-            # Handle any unpaid invoices
-            invoices = user.invoices.unpaid
-            invoices.each do |invoice|
-                invoice.update(status: 'failed', failed_at: Time.now)
             end
-    
-            # Create a new payment record
-            payment = Payment.create(
-                user: user,
-                amount: payment_intent.amount_received,
-                payment_method: payment_intent.payment_method,
-                payment_intent_id: payment_intent.id,
-                status: payment_intent.status,
-                failed_at: payment_intent.created
-            )
-    
-            # Send a notification email to the user
-            UserMailer.payment_failed(user, payment).deliver_later
-            rescue => e
-             Rails.logger.error("Error handling payment failed webhook: #{e}")
+            end
         end
+        "OK"
+        rescue JSON::ParserError => e
+        puts "Error parsing JSON: #{e.message}"
+        status 400
+        return
+        end
+    else
+        # Signature is not valid, request may be tampered with
+        puts "Signature is not valid, request may be tampered with"
+        status 402
+        return 'Bad Request'
+    end
+    
+end
 end

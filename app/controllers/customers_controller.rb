@@ -25,7 +25,7 @@ class CustomersController < ApplicationController
     newq = customer_params[:tokenNew]
     customer = Customer.new(customer_params)
     if customer.save
-      # queue = QueueUser.find_by(customer_id: customer.id)
+      #  queue = QueueUser.find_by(customer_id: customer.id)
       render json: customer, status: :created
       puts newq
     else

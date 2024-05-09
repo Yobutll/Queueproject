@@ -1,5 +1,5 @@
 source "https://rubygems.org"
-
+source 'https://rubygems.org'
 ruby "3.2.3"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
@@ -12,6 +12,8 @@ gem "pg", "~> 1.1"
 # Use sqlite3 as the database for Active Record
 gem "sqlite3", "~> 1.4"
 
+git_source(:github) {|repo_name| "https://github.com/#{repo_name}" }
+gem 'faraday'
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
 
@@ -32,6 +34,8 @@ gem "simple_command"
 gem 'stripe'
 gem 'line-bot-api'
 gem 'sinatra'
+gem 'dotenv'
+
 # Use Redis adapter to run Action Cable in production
 # gem "redis", ">= 4.0.1"
 

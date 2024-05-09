@@ -8,6 +8,7 @@ class Customer < ApplicationRecord
     def save_queue
         if queueNew
           queueNew.each do |queueNew|
+            
             obj = QueueUser.new(queueNew)
 
             obj.customer_id = self.id
