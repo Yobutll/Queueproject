@@ -1,7 +1,8 @@
 class AdminsController < ApplicationController
   #skip_before_action :authenticate_request, only: [:create, :check_login]
   #before_action : set_admin, only: [:show, :destroy, :create, :update]
-
+  skip_before_action :authenticate_request, only: [:create]
+  
   # POST /admins
   def index
     @admin = Admin.all # Get all users

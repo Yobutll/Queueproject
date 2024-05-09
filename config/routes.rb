@@ -15,9 +15,9 @@ Rails.application.routes.draw do
   delete "tokens/:id", to: "tokens_#destroy"
   # Admin
   get "admin", to: "admins_#index"
-  post "admin/login", to: "admins_#check_login"
+  
   post "/admins", to: "admins_#create"
-  post "/admin/show", to: "admins_#show"
+  
   # Authentication
   post "/auth/login", to: "authentication#login"
   post "/auth/req", to: "application#authenticate_request"

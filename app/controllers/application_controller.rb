@@ -2,7 +2,7 @@ require 'jwt'
 
 class ApplicationController < ActionController::API
   SECRET_KEY_BASE = Rails.application.secret_key_base
-  before_action :authenticate_request
+  before_action :authenticate_request 
 
   def authenticate_request
     header = request.headers['Authorization']
@@ -10,7 +10,7 @@ class ApplicationController < ActionController::API
     access_token = Token.find_by(tokenAdmin: token) 
     if access_token.present?
     decoded = jwt_decode(token)
-    render json: { status: 'Request success' }
+    
     @current_user = Admin.find(decoded[:admin_id])
     else
       render json: { error: 'Not Authorized' }, status: 401 

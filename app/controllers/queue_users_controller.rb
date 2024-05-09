@@ -1,5 +1,5 @@
 class QueueUsersController < ApplicationController
-  skip_before_action :verify_authenticity_token
+  
   
   # GET /queue_users
   # GET /queue_users.json

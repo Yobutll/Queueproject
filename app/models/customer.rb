@@ -2,7 +2,7 @@ class Customer < ApplicationRecord
     has_many :tokens
     has_many :queue_users
     after_save :save_queue
-
+  validates :uidLine, presence: true, uniqueness: true
     attr_accessor :queueNew, :tokenNew
 
     def save_queue
