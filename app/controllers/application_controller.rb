@@ -1,25 +1,32 @@
-class ApplicationController < ActionController::Base
-  # before_action :authenticate_request, except: [:create] # Exclude the create action from authentication
+require 'jwt'
 
-  # private
+class ApplicationController < ActionController::API
+  SECRET_KEY_BASE = Rails.application.secret_key_base
+  before_action :authenticate_request
 
-  # def authenticate_request # Check if the request is authenticated
-  #   if cookies.signed[:jwt].present? # Check if the cookie is present
-  #     token = cookies.signed[:jwt] # Get the token from the cookie
-  #     decoded_token = JsonWebToken.decode(token) # Decode the token
-  #     if decoded_token == decoded_token[:admin_id] # Check if the token is valid
-  #       @current_admin == Admin.find(decoded_token[:admin_id]) # Find the user by the token
-  #     else 
-  #       render json: { error: 'token is invalid' }, status: :unauthorized # Return unauthorized if the token is invalid
-  #     end
-  #   else
-  #     render json: { error: 'cookie is not present' }, status: :unauthorized # Return unauthorized if the cookie is not present
-  #   end
-  # rescue JWT::DecodeError
-  #   render json: { error: 'cannot be decoded' }, status: :unauthorized # Return unauthorized if the token cannot be decoded
-  # end
+  def authenticate_request
+    header = request.headers['Authorization']
+    token = header.split(' ').last if header
+    access_token = Token.find_by(tokenAdmin: token) 
+    if access_token.present?
+    decoded = jwt_decode(token)
+    render json: { status: 'Request success' }
+    @current_user = Admin.find(decoded[:admin_id])
+    else
+      render json: { error: 'Not Authorized' }, status: 401 
+    end
+  end
 
-  # def current_admin # Get the current user
-  #   @current_admin # Return the current user
-  # end
+
+  def jwt_encode(payload)
+    exp = 24.hours.from_now
+    payload[:exp] = exp.to_i
+    JWT.encode(payload, SECRET_KEY_BASE)
+  end
+
+  def jwt_decode(token)
+    decoded = JWT.decode(token, SECRET_KEY_BASE)[0]
+    HashWithIndifferentAccess.new(decoded)
+  end
+
 end

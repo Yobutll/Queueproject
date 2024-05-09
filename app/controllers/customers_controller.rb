@@ -1,5 +1,5 @@
 class CustomersController < ApplicationController
-  skip_before_action :verify_authenticity_token
+  #skip_before_action :verify_authenticity_token
   # GET /customers
   # GET /customers.json
 
@@ -22,16 +22,25 @@ class CustomersController < ApplicationController
   # POST /customers
   # POST /customers.json
   def create
-    newq = customer_params[:tokenNew]
     customer = Customer.new(customer_params)
     if customer.save
-      #  queue = QueueUser.find_by(customer_id: customer.id)
-      render json: customer, status: :created
-      puts newq
+      creation_time = Time.now
+      expiration_time = creation_time + 24.hours # Set expiration time
+    # Access token parameters directly from customer_params
+      token_line_id = customer_params[:tokenNew].first[:tokenLineID]
+    # Assuming you have defined a has_many association in your Customer model
+    # If not, replace 'tokens' with the appropriate association name
+      token = customer.tokens.build(tokenLineID: token_line_id, expiredLine: expiration_time)
+      if token.save
+        render json: { status: :created, location: customer, token: token.tokenLineID, expires_at: expiration_time }
+      else
+        render json: { error: 'Failed to save token' }, status: :unprocessable_entity
+      end
     else
       render json: customer.errors, status: :unprocessable_entity
     end
   end
+
 
   # PATCH/PUT /customers/1
   # PATCH/PUT /customers/1.json
@@ -67,4 +76,6 @@ class CustomersController < ApplicationController
     def customer_params
       params.require(:customer).permit(:uidLine, queueNew: [:cusName, :cusPhone, :cusSeat], tokenNew: [:tokenLineID])
     end
+
+    
 end
