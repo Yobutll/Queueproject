@@ -6,7 +6,6 @@ class AuthenticationController < ApplicationController
   def login
     encrypt_password = Admin.encrypt(params[:password])
     @admin = Admin.find_by(username: params[:username], password_digest: encrypt_password)
-
     if @admin
       creation_time = Time.now
       expiration_time = creation_time + 24.hours # Set expiration time
@@ -26,7 +25,7 @@ class AuthenticationController < ApplicationController
   end
 
   def jwt_encode(payload)
-    exp = 24.hours.from_now
+    exp = 1.minute.from_now
     payload[:exp] = exp.to_i
     JWT.encode(payload, SECRET_KEY_BASE)
   end

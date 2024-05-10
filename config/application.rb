@@ -10,7 +10,7 @@ module Queueproject
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.1
-    config.time_zone = 'Asia/Bangkok'
+    config.time_zone = 'Asia/Bangkok' 
     config.active_record.default_timezone = :local
     config.active_record.time_zone_aware_attributes = false
     # Please, add to the `ignore` list any other `lib` subdirectories that do

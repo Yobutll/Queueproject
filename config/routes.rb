@@ -5,29 +5,27 @@ Rails.application.routes.draw do
   resources :admins
   resources :admin_controller, only: [:new, :create, :destroy]
   
-
-  #set route 
+  match "admins_controller/new", to: "admins#new", via: [:get, :post]
+  match "admins_controller/create", to: "admins#create", via: [:get, :post]
+  match "admins_controller/index", to: "admins#index", via: [:get, :post]
+  match "admins_controller/show", to: "admins#show", via: [:get, :post]
+  # Auth
+  match "auth/login", to: "authentication#login", via: [:get, :post]
+  match "auth/req", to: "application#authenticate_request", via: [:get, :post]
   # Token
- 
-  post "webhooks", to: "webhooks#webhook"
-  get "tokens", to: "tokens_#index"
-  post "tokens", to: "tokens_#create"
-  put "tokens/:id", to: "tokens_#update"
-  delete "tokens/:id", to: "tokens_#destroy"
-
-  # Admin
-  get "admin", to: "admins_#index"
-  post "/admins", to: "admins_#create"
-  
-  # Authentication
-  post "/auth/login", to: "authentication#login"
-  post "/auth/req", to: "application#authenticate_request"
-
+  match "tokens", to: "tokens#index", via: [:get, :post]
+  match "tokens/Admin/tokens", to: "tokens#Admin_session", via: [:get, :post]
+  match "tokens/delete", to: "tokens#destroy", via: [:get, :post]
+  match "tokens/show", to: "tokens#show", via: [:get, :post]
   # Customer
-  post "/customers", to: "customers_#create"
-  
+  match "customers", to: "customers#index", via: [:get, :post]
+  match "customers/create", to: "customers#create", via: [:get, :post]
 
-  
+  # Queue
+  match "queue_users", to: "queue_users#index", via: [:get, :post]
+  match "queue_users/create", to: "queue_users#create", via: [:get, :post]
+  match "queue_users", to: "queue_users#show", via: [:update]
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
