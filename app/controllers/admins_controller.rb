@@ -20,9 +20,7 @@ class AdminsController < ApplicationController
     else
       render json: @admin.errors, status: :unprocessable_entity
     end
-
   end
-
 
   #Check login by compare encrypted password that user input with password_digest
   #def check_login

@@ -8,19 +8,21 @@ Rails.application.routes.draw do
 
   #set route 
   # Token
+ 
   post "webhooks", to: "webhooks#webhook"
   get "tokens", to: "tokens_#index"
   post "tokens", to: "tokens_#create"
   put "tokens/:id", to: "tokens_#update"
   delete "tokens/:id", to: "tokens_#destroy"
+
   # Admin
   get "admin", to: "admins_#index"
-  
   post "/admins", to: "admins_#create"
   
   # Authentication
   post "/auth/login", to: "authentication#login"
   post "/auth/req", to: "application#authenticate_request"
+
   # Customer
   post "/customers", to: "customers_#create"
   

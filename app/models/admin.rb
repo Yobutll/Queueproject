@@ -1,5 +1,4 @@
 class Admin < ApplicationRecord
-
     has_secure_password
     validates :username, presence: true, uniqueness: true
     validates :password, presence: true
@@ -21,12 +20,12 @@ class Admin < ApplicationRecord
         self.class.encrypt(p)
     end
 
-  def verify
-    self.user_crypted.user_crypted == encrypt(p) if self.user_crypted
-  end
+    def verify
+        self.user_crypted.user_crypted == encrypt(p) if self.user_crypted
+    end
 
-  def encrypt_pin_code
-      self.password_digest = encrypt(self.password_digest)
+     def encrypt_pin_code
+        self.password_digest = encrypt(self.password_digest)
     end
 
 end

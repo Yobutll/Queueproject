@@ -15,7 +15,7 @@ class QueueUser < ApplicationRecord
         messages: [
             { type: "text", text: "ถึงคิวของคุณแล้วกรุณาไปที่หน้าแคชเชียร์" },
             
-        ]
+          ]
         }
         message_json = JSON.dump(message_data)
         url = "https://api.line.me/v2/bot/message/push"
@@ -29,7 +29,7 @@ class QueueUser < ApplicationRecord
         puts "response: #{response.body}"
     end
 
-      private
+    private
     def status_changed_to_3?
       cusStatus_changed? && cusStatus == "3"
     end
@@ -40,11 +40,11 @@ class QueueUser < ApplicationRecord
         letter = max_qNumber[/[A-Za-z]+/] || "A"
         number = max_qNumber[/\d+/].to_i
         number += 1
-        if number == 999
+        if number <= 999
           letter = letter.next
           number = 1
         end
-        if letter == "Z" && number == 998
+        if letter == "Z" && number == 999
           letter = "A"
           number = 1
         end
@@ -58,10 +58,10 @@ class QueueUser < ApplicationRecord
       self.cusTimeEnd = Time.now
     end
     
-  def notify_if_status_changed_to_2
-    if saved_change_to_cusStatus? && cusStatus == "2"
-      push_message_calling(customer.uidLine)
+    def notify_if_status_changed_to_2
+      if saved_change_to_cusStatus? && cusStatus == "2"
+        push_message_calling(customer.uidLine)
+      end
     end
-  end
    
 end

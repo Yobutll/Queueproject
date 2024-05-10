@@ -25,7 +25,6 @@ class TokensController < ApplicationController
   # POST /tokens.json
   def create
     @token = Token.new(token_params)
-
     if @token.save
       render :show, status: :created, location: @token
     else
@@ -51,12 +50,12 @@ class TokensController < ApplicationController
 
   private
     # Use callbacks to share common setup or constraints between actions.
-    def set_token
-      @token = Token.find(params[:id])
-    end
+  def set_token
+    @token = Token.find(params[:id])
+  end
 
-    # Only allow a list of trusted parameters through.
-    def token_params
-      params.require(:queue_user).permit(:customer_id, :admin_id, :expiredAdmin, :expiredLine, :tokenAdmin, :tokenLineID)
-    end
+  # Only allow a list of trusted parameters through.
+  def token_params
+    params.require(:queue_user).permit(:customer_id, :admin_id, :expiredAdmin, :expiredLine, :tokenAdmin, :tokenLineID)
+  end
 end

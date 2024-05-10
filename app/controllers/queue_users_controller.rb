@@ -1,19 +1,28 @@
 class QueueUsersController < ApplicationController
   
-  
   # GET /queue_users
   # GET /queue_users.json
   def index
-    @queue_users = QueueUser.all
-    render json: @queue_users
+    date = params[:date]
+    if date.nil?
+      @queue_users_3_0 = QueueUser.where(cusStatus: ["3", "0"])
+      @queue_users_1_2 = QueueUser.where(cusStatus: ["1", "2"])
+    else
+      date = Date.parse(date) # Convert the date string to a Date object
+      @queue_users_3_0 = QueueUser.where(cusStatus: ["3", "0"]).where("DATE(created_at) = ?", date)
+      @queue_users_1_2 = QueueUser.where(cusStatus: ["1", "2"]).where("DATE(created_at) = ?", date)
+    end
+    render json: { queue_users_3_0: @queue_users_3_0, queue_users_1_2: @queue_users_1_2 }
   end
 
   # GET /queue_users/1
   # GET /queue_users/1.json
   def show
-    queue = QueueUser.find_by(customer_id: params[:customer_id])
+    cus_id = params[:id]
+    queue = QueueUser.where(customer_id: cus_id).where(cusStatus: ["1", "2"]).first
     if queue
-      render json: queue
+      q_count = QueueUser.where("created_at < ?", queue.created_at).where(cusStatus: ["1", "2"]).count
+      render json: { queue_count: q_count, queue:queue}
     else
       render json: { error: 'Queue not found' }, status: :not_found
     end
@@ -23,11 +32,16 @@ class QueueUsersController < ApplicationController
   # POST /queue_users.json
   def create
     if queue_user_params[:customer_id].present?
-      queue_u = QueueUser.new(queue_user_params)
-      if queue_u.save
-        render json: queue_u, status: :created
+      customer = QueueUser.where(customer_id: queue_user_params[:customer_id]).where(cusStatus: ["1", "2"])
+      if customer.present?
+        render json: { error: '1 Queue per 1 acc' }, status: :unprocessable_entity
       else
-        render json: queue_u.errors, status: :unprocessable_entity
+        queue_u = QueueUser.new(queue_user_params)
+        if queue_u.save
+          render json: queue_u, status: :created
+        else
+          render json: queue_u.errors, status: :unprocessable_entity
+        end
       end
     else
       render json: { error: 'customer_id is required' }, status: :unprocessable_entity
@@ -59,12 +73,12 @@ class QueueUsersController < ApplicationController
   
   private
     # Use callbacks to share common setup or constraints between actions.
-    def set_queue_user
-      @queue_user = QueueUser.find(params[:id])
-    end
+  def set_queue_user
+    @queue_user = QueueUser.find(params[:id])
+  end
 
     # Only allow a list of trusted parameters through.
-    def queue_user_params
-      params.require(:queue_user).permit(:cusName, :cusPhone, :cusSeat, :customer_id, :cusStatus ,:qNumber )
-    end
+  def queue_user_params
+    params.require(:queue_user).permit(:cusName, :cusPhone, :cusSeat, :customer_id, :cusStatus ,:qNumber)
+  end
 end

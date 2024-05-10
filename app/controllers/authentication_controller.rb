@@ -1,8 +1,8 @@
-
+require 'jwt'
 class AuthenticationController < ApplicationController
   SECRET_KEY_BASE = Rails.application.secret_key_base
   skip_before_action :authenticate_request , only: [:login]
-  require 'jwt'
+  
   def login
     encrypt_password = Admin.encrypt(params[:password])
     @admin = Admin.find_by(username: params[:username], password_digest: encrypt_password)

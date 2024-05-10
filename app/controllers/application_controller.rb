@@ -1,5 +1,4 @@
 require 'jwt'
-
 class ApplicationController < ActionController::API
   SECRET_KEY_BASE = Rails.application.secret_key_base
   before_action :authenticate_request 
@@ -9,14 +8,12 @@ class ApplicationController < ActionController::API
     token = header.split(' ').last if header
     access_token = Token.find_by(tokenAdmin: token) 
     if access_token.present?
-    decoded = jwt_decode(token)
-    
-    @current_user = Admin.find(decoded[:admin_id])
+      decoded = jwt_decode(token)
+      @current_user = Admin.find(decoded[:admin_id])
     else
       render json: { error: 'Not Authorized' }, status: 401 
     end
   end
-
 
   def jwt_encode(payload)
     exp = 24.hours.from_now
@@ -28,5 +25,4 @@ class ApplicationController < ActionController::API
     decoded = JWT.decode(token, SECRET_KEY_BASE)[0]
     HashWithIndifferentAccess.new(decoded)
   end
-
 end
