@@ -2,6 +2,7 @@ class Token < ApplicationRecord
     belongs_to :customer, optional: true
     belongs_to :admin, optional: true
 
+    # atrribute :tokens_Admin, :boolean, default: true
     # #validates :customer_id, presence: true, unless: -> { admin_id.present? }
     # #validates :admin_id, presence: true, unless: -> { customer_id.present? }
 

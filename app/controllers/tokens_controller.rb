@@ -1,13 +1,19 @@
 class TokensController < ApplicationController
-  skip_before_action :verify_authenticity_token
+  skip_before_action :authenticate_request, only: [:Admin_session]
   before_action :set_token, only: %i[ show update destroy ]
-  before_action :authenticate_request, except: [:create]
+
+  
 
   # GET /tokens
   # GET /tokens.json
   def index
     @tokens = Token.all
     render json: @tokens
+  end
+
+  def self.Admin_session
+    token = Token.select(:tokenAdmin, :admins_id)
+    render json: token
   end
 
   # GET /tokens/1
