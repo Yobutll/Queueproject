@@ -38,18 +38,7 @@ class CustomersController < ApplicationController
     else
       customer = Customer.new(customer_params)
       if customer.save
-        creation_time = Time.now
-        expiration_time = creation_time + 24.hours # Set expiration time
-      # Access token parameters directly from customer_params
-        token_line_id = customer_params[:tokenNew].first[:tokenLineID]
-      # Assuming you have defined a has_many association in your Customer model
-      # If not, replace 'tokens' with the appropriate association name
-        token = customer.tokens.build(tokenLineID: token_line_id, expiredLine: expiration_time)
-        if token.save
-          render json: { status: :created, location: customer, token: token.tokenLineID, expires_at: expiration_time }
-        else
-          render json: { error: 'Failed to save token' }, status: :unprocessable_entity
-        end
+        render json: customer, status: :created
       else
         render json: customer.errors, status: :unprocessable_entity
       end
@@ -89,8 +78,6 @@ class CustomersController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def customer_params
-      params.require(:customer).permit(:uidLine, queueNew: [:cusName, :cusPhone, :cusSeat], tokenNew: [:tokenLineID])
+      params.require(:customer).permit(:uidLine, queueNew: [:cusName, :cusPhone, :cusSeat])
     end
-
-    
 end

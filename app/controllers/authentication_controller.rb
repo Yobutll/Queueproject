@@ -23,7 +23,7 @@ class AuthenticationController < ApplicationController
       render json: { error: 'Wrong password' }, status: :unauthorized
     end
   end
- #อ้ากกกกกกกกกกกกกกกกกกกกกกกกกกกกกกกกกกกกกกกกกกกกกกกกกกกกกกกกกกกกกกก
+ 
   def jwt_encode(payload)
     exp = 24.hours.from_now
     payload[:exp] = exp.to_i

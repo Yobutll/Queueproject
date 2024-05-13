@@ -3,7 +3,7 @@ class Customer < ApplicationRecord
     has_many :queue_users
     after_save :save_queue
     validates :uidLine, presence: true, uniqueness: true
-    attr_accessor :queueNew, :tokenNew
+    attr_accessor :queueNew
 
     def save_queue
       if queueNew
@@ -17,12 +17,6 @@ class Customer < ApplicationRecord
           puts "Queue saved"
     end 
 
-    def save_token
-      if tokenNew
-          tok = Token.new(tokenNew)
-          tok.customer_id = self.id
-          tok.save
-      end
-    end
+  
   
 end

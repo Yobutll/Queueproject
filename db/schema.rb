@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_05_09_091642) do
+ActiveRecord::Schema[7.1].define(version: 2024_05_13_120443) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -41,19 +41,14 @@ ActiveRecord::Schema[7.1].define(version: 2024_05_09_091642) do
   end
 
   create_table "tokens", force: :cascade do |t|
-    t.string "tokenLineID"
     t.string "tokenAdmin"
-    t.datetime "expiredLine"
-    t.datetime "expiredAdmin"
+    t.string "expiredAdmin"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "customer_id"
     t.bigint "admins_id"
     t.index ["admins_id"], name: "index_tokens_on_admins_id"
-    t.index ["customer_id"], name: "index_tokens_on_customer_id"
   end
 
   add_foreign_key "queue_users", "customers"
   add_foreign_key "tokens", "admins", column: "admins_id"
-  add_foreign_key "tokens", "customers"
 end
