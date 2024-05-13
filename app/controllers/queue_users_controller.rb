@@ -15,6 +15,8 @@ class QueueUsersController < ApplicationController
       elsif qstatus == "2"
         queue_2 = QueueUser.where(cusStatus: ["2"])
         render json: queue_2
+      elsif qstatus == "all"
+        render json: queue_1_2
       else
         render json: queue_3_0 
       end
