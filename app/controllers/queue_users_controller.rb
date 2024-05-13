@@ -1,18 +1,18 @@
 class QueueUsersController < ApplicationController
-  
+  skip_before_action :authenticate_request 
   # GET /queue_users
   # GET /queue_users.json
+
   def index
     date = params[:date]
     if date.nil?
-      @queue_users_3_0 = QueueUser.where(cusStatus: ["3", "0"])
-      @queue_users_1_2 = QueueUser.where(cusStatus: ["1", "2"])
+      @queue_users = QueueUser.all
+      
     else
       date = Date.parse(date) # Convert the date string to a Date object
-      @queue_users_3_0 = QueueUser.where(cusStatus: ["3", "0"]).where("DATE(created_at) = ?", date)
-      @queue_users_1_2 = QueueUser.where(cusStatus: ["1", "2"]).where("DATE(created_at) = ?", date)
+      @queue_users = QueueUser.where("DATE(created_at) = ?", date)
     end
-    render json: { queue_users_3_0: @queue_users_3_0, queue_users_1_2: @queue_users_1_2 }
+    render json: @queue_users
   end
 
   # GET /queue_users/1

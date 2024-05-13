@@ -24,8 +24,8 @@ Rails.application.routes.draw do
   # Queue
   match "queue_users", to: "queue_users#index", via: [:get, :post]
   match "queue_users/create", to: "queue_users#create", via: [:get, :post]
-  match "queue_users", to: "queue_users#show", via: [:update]
-
+  match "queue_users/:id", to: "queue_users#update", via: [:update]
+  match "webhooks", to: "webhooks#webhook", via: [:post]
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

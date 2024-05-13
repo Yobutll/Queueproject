@@ -7,8 +7,8 @@ require 'pg'
 require 'faraday'
 require 'json'
 class WebhooksController < ApplicationController
-  skip_before_action :verify_authenticity_token
-   
+  # skip_before_action :verify_authenticity_token
+  skip_before_action :authenticate_request , only: [:webhook]
   Dotenv.load
   def get_db_connection
     conn = PG.connect(dbname: 'Queueproject_development', user: 'riseplus', password: 'riseplus')
@@ -24,7 +24,7 @@ class WebhooksController < ApplicationController
 
   def get_customer_data(uid)
     conn = get_db_connection
-    result = conn.exec_params('SELECT * FROM customers INNER JOIN queue_users ON customers.id = queue_users.customer_id WHERE customers."uidLine" = $1', [uid])
+    result = conn.exec_params('SELECT * FROM customers INNER JOIN queue_users ON customers.id = queue_users.customer_id WHERE customers."uidLine" = $1 AND (queue_users."cusStatus" = $2 OR queue_users."cusStatus" = $3)', [uid, '1', '2'])
     customer_data = nil
     result.each do |row|
       customer_data = row
@@ -69,6 +69,7 @@ class WebhooksController < ApplicationController
                       type: 'text',
                       text: "กรุณาจองคิวก่อนครับ"
                   }
+                  puts customer_data
                 client.reply_message(event['replyToken'], message)
                 else
                   queue = get_previous_queue_users_count(customer_data)

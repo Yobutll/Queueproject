@@ -11,17 +11,12 @@ class ApplicationController < ActionController::API
     if access_token.present?
       decoded = jwt_decode(token)
       @current_user = Admin.find(decoded[:admin_id])
-      render json: {status: "success" }
+      
     else
       render json: { error: 'Not Authorized' }, status: 401 
     end
   end
 
-  # def jwt_encode(payload)
-  #   exp = 24.hours.from_now
-  #   payload[:exp] = exp.to_i
-  #   JWT.encode(payload, SECRET_KEY_BASE)
-  # end
 
   def jwt_decode(token)
     decoded = JWT.decode(token, SECRET_KEY_BASE)[0]

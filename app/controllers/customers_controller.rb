@@ -2,6 +2,7 @@ class CustomersController < ApplicationController
   #skip_before_action :verify_authenticity_token
   # GET /customers
   # GET /customers.json
+  skip_before_action :authenticate_request
 
   def index
     customers = Customer.all

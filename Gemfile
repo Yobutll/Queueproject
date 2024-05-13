@@ -35,7 +35,7 @@ gem 'stripe'
 gem 'line-bot-api'
 gem 'sinatra'
 gem 'dotenv'
-
+gem 'rack-cors'
 # Use Redis adapter to run Action Cable in production
 # gem "redis", ">= 4.0.1"
 

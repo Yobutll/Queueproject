@@ -1,22 +1,51 @@
+  require 'faraday'
+  require 'json'
 class QueueUser < ApplicationRecord
     before_save :set_queue_finish_at, if: :status_changed_to_3?
     belongs_to :customer , optional: true
     before_create :set_qNumber
-    after_update :notify_if_status_changed_to_2
-    
-    require 'faraday'
-    require 'json'
+    after_update :notify_if_status_changed
+    after_create :notify_if_queue_created
     
     Dotenv.load
     
-    def push_message_calling(uid_line)    
+    def push_message_calling(uid_Line)    
+      if cusStatus == "3"
+          message_data = {
+          to: customer.uidLine,
+          messages: [
+              { type: "text", text: "เสร็จสิ้นแล้วขอบคุณที่ใช้บริการ" },
+              
+            ]
+          }
+      end
+      if cusStatus == "2"
         message_data = {
-        to: uid_line,
-        messages: [
-            { type: "text", text: "ถึงคิวของคุณแล้วกรุณาไปที่หน้าแคชเชียร์" },
-            
-          ]
-        }
+          to: customer.uidLine,
+          messages: [
+              { type: "text", text: "ถึงคิวของคุณแล้วกรุณาไปที่หน้าแคชเชียร์" },
+              
+            ]
+          }
+      end
+      if cusStatus == "1"
+        message_data = {
+          to: customer.uidLine,
+          messages: [
+              { type: "text", text: "จองคิวสำเร็จ ได้คิว #{self.qNumber}" },
+              
+            ]
+          }
+      end
+      if cusStatus == "0"
+        message_data = {
+          to: customer.uidLine,
+          messages: [
+              { type: "text", text: "ยกเลิกคิวสำเร็จ" },
+              
+            ]
+          }
+      end
         message_json = JSON.dump(message_data)
         url = "https://api.line.me/v2/bot/message/push"
     
@@ -29,18 +58,13 @@ class QueueUser < ApplicationRecord
         puts "response: #{response.body}"
     end
 
-    private
-    def status_changed_to_3?
-      cusStatus_changed? && cusStatus == "3"
-    end
-
     def set_qNumber
       max_qNumber = QueueUser.all.sort_by { |q| [q.qNumber[0], q.qNumber[1..-1].to_i] }.last&.qNumber
       if max_qNumber
         letter = max_qNumber[/[A-Za-z]+/] || "A"
         number = max_qNumber[/\d+/].to_i
         number += 1
-        if number <= 999
+        if number >= 999
           letter = letter.next
           number = 1
         end
@@ -54,12 +78,22 @@ class QueueUser < ApplicationRecord
       end
     end
 
+    private
+    def status_changed_to_3?
+      cusStatus_changed? && cusStatus == "3"
+
+    end
+
     def set_queue_finish_at
       self.cusTimeEnd = Time.now
     end
     
-    def notify_if_status_changed_to_2
-      if saved_change_to_cusStatus? && cusStatus == "2"
+    def notify_if_queue_created
+        push_message_calling(customer.uidLine)
+    end
+    
+    def notify_if_status_changed
+      if saved_change_to_cusStatus? 
         push_message_calling(customer.uidLine)
       end
     end

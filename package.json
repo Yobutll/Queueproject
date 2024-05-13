@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@cloudflare/types": "^6.29.0"
+  }
+}
