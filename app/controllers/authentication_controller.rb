@@ -25,7 +25,7 @@ class AuthenticationController < ApplicationController
   end
 
   def jwt_encode(payload)
-    exp = 1.minute.from_now
+    exp = 24.hours.from_now
     payload[:exp] = exp.to_i
     JWT.encode(payload, SECRET_KEY_BASE)
   end
