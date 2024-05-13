@@ -5,8 +5,16 @@ class CustomersController < ApplicationController
   skip_before_action :authenticate_request
 
   def index
-    customers = Customer.all
-    render json: customers
+    uid_line = params[:uidLine]
+    customer = Customer.find_by(uidLine: uid_line)
+    puts customer
+    if customer.present?
+      puts customer.inspect 
+      render json: customer
+    else
+      customers = Customer.all
+      render json: customers
+    end
   end
 
   # GET /customers/1

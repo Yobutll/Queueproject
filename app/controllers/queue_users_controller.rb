@@ -5,14 +5,26 @@ class QueueUsersController < ApplicationController
 
   def index
     date = params[:date]
+    qstatus = params[:status]
+    queue_1_2 = QueueUser.where(cusStatus: ["1", "2"])
+    queue_3_0 = QueueUser.where(cusStatus: ["3", "0"])
     if date.nil?
-      @queue_users = QueueUser.all
-      
+      if qstatus == "1"
+        queue_1 = QueueUser.where(cusStatus: ["1"])
+        render json: queue_1 
+      elsif qstatus == "2"
+        queue_2 = QueueUser.where(cusStatus: ["2"])
+        render json: queue_2
+      else
+        render json: queue_3_0 
+      end
     else
-      date = Date.parse(date) # Convert the date string to a Date object
-      @queue_users = QueueUser.where("DATE(created_at) = ?", date)
+      render json: { queue_1_2: queue_1_2, queue_3_0: queue_3_0 }
+      # date = Date.parse(date) # Convert the date string to a Date object
+      # queue_1_2 = QueueUser.where("DATE(created_at) = ?", date).where(cusStatus: ["1", "2"])
+      # queue_3_0 = QueueUser.where("DATE(created_at) = ?", date).where(cusStatus: ["3", "0"])
+      # render json: { queue_1_2: queue_1_2, queue_3_0: queue_3_0 }  
     end
-    render json: @queue_users
   end
 
   # GET /queue_users/1
@@ -40,7 +52,7 @@ class QueueUsersController < ApplicationController
         if queue_u.save
           render json: queue_u, status: :created
         else
-          render json: queue_u.errors, status: :unprocessable_entity
+          render json: "queue not save", status: :unprocessable_entity
         end
       end
     else
