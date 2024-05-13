@@ -10,7 +10,6 @@ gem "sprockets-rails"
 
 gem "pg", "~> 1.1"
 # Use sqlite3 as the database for Active Record
-gem "sqlite3", "~> 1.4"
 
 git_source(:github) {|repo_name| "https://github.com/#{repo_name}" }
 gem 'faraday'
