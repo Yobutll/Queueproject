@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   match "admins_controller/show", to: "admins#show", via: [:get, :post]
   # Auth
   match "auth/login", to: "authentication#login", via: [:get, :post]
+  match "auth/logout", to: "authentication#logout", via: [:get, :delete]
   match "auth/req", to: "application#authenticate_request", via: [:get, :post]
   # Token
   match "tokens", to: "tokens#index", via: [:get, :post]

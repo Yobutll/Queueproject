@@ -2,18 +2,16 @@ class CustomersController < ApplicationController
   #skip_before_action :verify_authenticity_token
   # GET /customers
   # GET /customers.json
-  skip_before_action :authenticate_request
+  # skip_before_action :authenticate_request
 
   def index
     uid_line = params[:uidLine]
     customer = Customer.find_by(uidLine: uid_line)
     puts customer
     if customer.present?
-      puts customer.inspect 
-      render json: customer
+      render json: {exist: 1}
     else
-      customers = Customer.all
-      render json: customers
+      render json: {exist: 0}
     end
   end
 

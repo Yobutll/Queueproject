@@ -1,8 +1,8 @@
 class QueueUsersController < ApplicationController
-  skip_before_action :authenticate_request 
+  # skip_before_action :authenticate_request 
   # GET /queue_users
   # GET /queue_users.json
-
+  # GET /queue_users?status=3
   def index
     date = params[:date]
     qstatus = params[:status]
@@ -25,7 +25,7 @@ class QueueUsersController < ApplicationController
       # date = Date.parse(date) # Convert the date string to a Date object
       # queue_1_2 = QueueUser.where("DATE(created_at) = ?", date).where(cusStatus: ["1", "2"])
       # queue_3_0 = QueueUser.where("DATE(created_at) = ?", date).where(cusStatus: ["3", "0"])
-      # render json: { queue_1_2: queue_1_2, queue_3_0: queue_3_0 }  
+      # render json: { queue_1_2: queue_1_2, queue_3_0: queue_3_0 }
     end
   end
 
@@ -66,11 +66,10 @@ class QueueUsersController < ApplicationController
   # PATCH/PUT /queue_users/1.json
   def update
     queue_u = QueueUser.find_by_id(params[:id])
-    if queue_u.update(queue_user_params)
+    if !["0", "3"].include?(queue_u.cusStatus) && queue_u.update(queue_user_params)
       render json:queue_u, status: :ok
     else
-      render json: queue_u.errors
-      puts queue_u.error.full_messages
+      render json: "คิวนี้เสร็จสิ้นไปแล้ว", status: :unprocessable_entity
     end
   end
 

@@ -2,8 +2,6 @@ class TokensController < ApplicationController
   skip_before_action :authenticate_request, only: [:Admin_session]
   before_action :set_token, only: %i[ show update destroy ]
 
-  
-
   # GET /tokens
   # GET /tokens.json
   def index
