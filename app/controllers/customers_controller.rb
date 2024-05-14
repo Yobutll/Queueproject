@@ -9,7 +9,7 @@ class CustomersController < ApplicationController
     customer = Customer.find_by(uidLine: uid_line)
     puts customer
     if customer.present?
-      render json: {exist: 1}
+      render json: {exist: 1 , customer: customer}
     else
       render json: {exist: 0}
     end
