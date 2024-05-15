@@ -1,7 +1,7 @@
 require 'jwt'
 class ApplicationController < ActionController::API
   SECRET_KEY_BASE = Rails.application.secret_key_base
-  # before_action :authenticate_request
+  before_action :authenticate_request
   # rescue_from JWT::ExpiredSignature, with: :render_token_expired
 
 
