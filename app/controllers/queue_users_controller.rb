@@ -55,7 +55,7 @@ class QueueUsersController < ApplicationController
       else
         queue_u = QueueUser.new(queue_user_params)
         if queue_u.save
-          ActionCable.server.broadcast 'queue_management_channel', {action: 'create', queue: queue_u} # 
+          ActionCable.server.broadcast 'QueueManagmentChannel', {action: 'create', queue: queue_u} # 
           render json: queue_u, status: :created
         else
           render json: "queue not save", status: :unprocessable_entity
@@ -71,7 +71,7 @@ class QueueUsersController < ApplicationController
   def update
     queue_u = QueueUser.find_by_id(params[:id])
     if !["0", "3"].include?(queue_u.cusStatus) && queue_u.update(queue_user_params)
-      ActionCable.server.broadcast 'queue_management_channel', {action: 'update', queue: queue_u}
+      ActionCable.server.broadcast 'QueueManagmentChannel', {action: 'update', queue: queue_u}
       render json:queue_u, status: :ok
     else
       render json: "คิวนี้เสร็จสิ้นไปแล้ว", status: :unprocessable_entity
@@ -83,7 +83,7 @@ class QueueUsersController < ApplicationController
   def destroy
     queue = QueueUser.find_by_id(params[:id])
     if queue.destroy
-      ActionCable.server.broadcast 'queue_management_channel', {action: 'destroy', queue: queue.id}
+      ActionCable.server.broadcast 'QueueManagmentChannel', {action: 'destroy', queue: queue.id}
       render json: { message: 'Queue was successfully destroyed' }
     else
       render json: { error: 'Queue not found' }, status: :not_found

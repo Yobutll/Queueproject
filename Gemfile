@@ -37,6 +37,9 @@ gem 'dotenv'
 gem 'rack-cors'
 gem 'actioncable'
 gem 'redis', '~> 4.0'
+
+gem 'redis-rails'
+
 # Use Redis adapter to run Action Cable in production
 # gem "redis", ">= 4.0.1"
 
