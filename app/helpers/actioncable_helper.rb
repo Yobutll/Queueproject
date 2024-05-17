@@ -1,0 +1,2 @@
+module ActioncableHelper
+end

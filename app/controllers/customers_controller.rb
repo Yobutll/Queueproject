@@ -2,7 +2,8 @@ class CustomersController < ApplicationController
   #skip_before_action :verify_authenticity_token
   # GET /customers
   # GET /customers.json
-  # skip_before_action :authenticate_request
+  skip_before_action :authenticate_request , only: [:create]
+ 
 
   def index
     uid_line = params[:uidLine]
@@ -30,12 +31,15 @@ class CustomersController < ApplicationController
   # POST /customers.json
   def create
     uid_line = customer_params[:uidLine]
-    customer = Customer.find_by(uidLine: uid_line)
-    if customer.present?
+    customers = Customer.find_by(uidLine: uid_line)
+    # queueNew = customer_params[:queueNew]
+    if customers.present?
       render json: { error: 'Customer already exists' }, status: :unprocessable_entity
     else
-      customer = Customer.new(customer_params)
-      if customer.save
+      customer = Customer.new(uidLine: uid_line)
+      customer.queueNew = customer_params[:queueNew]
+      if customer.save 
+        ActionCable.server.broadcast 'queue_management_channel', {action: 'create', customer: customer} #
         render json: customer, status: :created
       else
         render json: customer.errors, status: :unprocessable_entity
@@ -49,6 +53,7 @@ class CustomersController < ApplicationController
   def update
     customer = Customer.find_by_id(params[:id])
     if customer.update(customer_params)
+      ActionCable.server.broadcast 'queue_management_channel', {action: 'update', customer: customer}
       render json:customer , status: :ok
     else
       render json: @customer.errors, status: :unprocessable_entity

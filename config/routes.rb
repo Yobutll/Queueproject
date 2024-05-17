@@ -1,10 +1,12 @@
 Rails.application.routes.draw do
+  
   resources :tokens
   resources :queue_users
   resources :customers
   resources :admins
   resources :admin_controller, only: [:new, :create, :destroy]
   
+  mount ActionCable.server => '/cable'
   match "admins_controller/new", to: "admins#new", via: [:get, :post]
   match "admins_controller/create", to: "admins#create", via: [:get, :post]
   match "admins_controller/index", to: "admins#index", via: [:get, :post]

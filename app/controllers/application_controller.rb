@@ -2,8 +2,6 @@ require 'jwt'
 class ApplicationController < ActionController::API
   SECRET_KEY_BASE = Rails.application.secret_key_base
   before_action :authenticate_request
-  # rescue_from JWT::ExpiredSignature, with: :render_token_expired
-
 
   def authenticate_request
     header = request.headers['Authorization']
@@ -23,8 +21,4 @@ class ApplicationController < ActionController::API
     end
   end
 
-
-  # def render_token_expired
-  #   render json: { error: 'Token expired' }, status: 401
-  # end
 end
