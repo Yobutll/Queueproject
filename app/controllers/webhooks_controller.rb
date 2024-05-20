@@ -34,9 +34,9 @@ class WebhooksController < ApplicationController
 
   def client
     @client ||= Line::Bot::Client.new { |config|
-      config.channel_id = ENV["LINE_CHANNEL_ID"]
-      config.channel_secret = ENV["LINE_CHANNEL_SECRET"]
-      config.channel_token = ENV["LINE_CHANNEL_TOKEN"]
+      config.channel_id = ["004781685"]
+      config.channel_secret = ["7e478ae66537aa480473c8ea8f60cbdf"]
+      config.channel_token = ["s0MjEaRpFdcMZE9N+1S97hSC1pqReiJLht23P0m3SvLrGQW+NXh8378fsY6zVoyXCagldn/6Qql342wD0vxZe58u3PU7jFab7V1EXgehi6HbjJlhv9uKAvUvxMWlCUiYSAXII0PVqwiDfs1KrOlhUgdB04t89/1O/w1cDnyilFU="]
     }
   end
 
@@ -44,15 +44,17 @@ class WebhooksController < ApplicationController
     http_request_body = request.body.read # Request body string
     # Extract signature from request header
     received_signature = request.env['HTTP_X_LINE_SIGNATURE']
-    puts (received_signature).inspect
+    
     # Compute HMAC-SHA256 digest
-    digest = OpenSSL::HMAC.digest(OpenSSL::Digest::SHA256.new, ENV["LINE_CHANNEL_SECRET"], http_request_body)
+    digest = OpenSSL::HMAC.digest(OpenSSL::Digest::SHA256.new, "7e478ae66537aa480473c8ea8f60cbdf", http_request_body)
     if http_request_body.nil? || http_request_body.empty?
       puts "OK"
       status 200
       return
     end
     computed_signature = Base64.strict_encode64(digest)
+    puts (computed_signature).inspect
+    puts (received_signature).inspect
     # Compare received signature and computed signature
     if received_signature == computed_signature
         begin
