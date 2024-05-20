@@ -8,7 +8,7 @@ require 'faraday'
 require 'json'
 class WebhooksController < ApplicationController
   # skip_before_action :verify_authenticity_token
-  # skip_before_action :authenticate_request , only: [:webhook]
+  skip_before_action :authenticate_request , only: [:webhook]
   Dotenv.load
   def get_db_connection
     conn = PG.connect(dbname: 'Queueproject_development', user: 'riseplus', password: 'riseplus')
