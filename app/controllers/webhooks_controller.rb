@@ -44,7 +44,7 @@ class WebhooksController < ApplicationController
     http_request_body = request.body.read # Request body string
     # Extract signature from request header
     received_signature = request.env['HTTP_X_LINE_SIGNATURE']
-    console.log(received_signature).inspect
+    puts (received_signature).inspect
     # Compute HMAC-SHA256 digest
     digest = OpenSSL::HMAC.digest(OpenSSL::Digest::SHA256.new, ENV["LINE_CHANNEL_SECRET"], http_request_body)
     if http_request_body.nil? || http_request_body.empty?
