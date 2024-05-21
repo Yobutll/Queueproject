@@ -27,7 +27,7 @@ class QueueUsersController < ApplicationController
       date = Date.parse(date) # Convert the date string to a Date object
       queue_1_2 = QueueUser.where("DATE(created_at) = ?", date)
       queue_3_0 = QueueUser.where("DATE(created_at) = ?", date)
-      render json: { queue_3_0: queue_3_0 }
+      render json: queue_3_0 
     end
   end
 
