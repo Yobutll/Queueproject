@@ -7,11 +7,12 @@ Rails.application.configure do
   # it changes. This slows down response time but is perfect for development
   # since you don't have to restart the web server when you make code changes.
   config.enable_reloading = true
- 
+  config.action_cable.allowed_request_origins = ['*']
+  config.action_cable.disable_request_forgery_protection = true
   config.hosts << "https://a603-2403-6200-8837-412-943f-91ac-4dd5-7c97.ngrok-free.app"
   config.hosts = nil
   # Do not eager load code on boot.
-  
+
   config.eager_load = false
 
   # Show full error reports.

@@ -39,7 +39,6 @@ class CustomersController < ApplicationController
       customer = Customer.new(uidLine: uid_line)
       customer.queueNew = customer_params[:queueNew]
       if customer.save 
-        ActionCable.server.broadcast 'queue_management_channel', {action: 'create', customer: customer} #
         render json: customer, status: :created
       else
         render json: customer.errors, status: :unprocessable_entity
@@ -53,7 +52,7 @@ class CustomersController < ApplicationController
   def update
     customer = Customer.find_by_id(params[:id])
     if customer.update(customer_params)
-      ActionCable.server.broadcast 'queue_management_channel', {action: 'update', customer: customer}
+      ActionCable.server.broadcast('QueueManagmentChannel', {action: 'update', customer: customer})
       render json:customer , status: :ok
     else
       render json: @customer.errors, status: :unprocessable_entity

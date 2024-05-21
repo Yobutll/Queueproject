@@ -21,7 +21,7 @@ class Customer < ApplicationRecord
           obj = QueueUser.new(queueNew)
           obj.customer_id = self.id
             if obj.save
-              ActionCable.server.broadcast 'queue_management_channel', {action: 'create', queue: obj}
+              ActionCable.server.broadcast('QueueManagmentChannel', {action: 'create', queue: obj})
             else
               puts obj.errors.full_messages
             end

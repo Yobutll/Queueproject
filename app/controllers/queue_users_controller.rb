@@ -1,5 +1,5 @@
 class QueueUsersController < ApplicationController
-  skip_before_action :authenticate_request , only: [:create, :update, :show]
+  skip_before_action :authenticate_request , only: [:create, :update, :show, :index, :destroy]
   # GET /queue_users
   # GET /queue_users.json
   # GET /queue_users?status=3
@@ -24,11 +24,10 @@ class QueueUsersController < ApplicationController
         render json: queue_3_0 
       end
     else
-      render json: { queue_1_2: queue_1_2, queue_3_0: queue_3_0 }
-      # date = Date.parse(date) # Convert the date string to a Date object
-      # queue_1_2 = QueueUser.where("DATE(created_at) = ?", date).where(cusStatus: ["1", "2"])
-      # queue_3_0 = QueueUser.where("DATE(created_at) = ?", date).where(cusStatus: ["3", "0"])
-      # render json: { queue_1_2: queue_1_2, queue_3_0: queue_3_0 }
+      date = Date.parse(date) # Convert the date string to a Date object
+      queue_1_2 = QueueUser.where("DATE(created_at) = ?", date)
+      queue_3_0 = QueueUser.where("DATE(created_at) = ?", date)
+      render json: { queue_3_0: queue_3_0 }
     end
   end
 
@@ -55,7 +54,7 @@ class QueueUsersController < ApplicationController
       else
         queue_u = QueueUser.new(queue_user_params)
         if queue_u.save
-          ActionCable.server.broadcast 'QueueManagmentChannel', {action: 'create', queue: queue_u} # 
+          ActionCable.server.broadcast('QueueManagmentChannel', {action: 'create', queue: queue_u}) # 
           render json: queue_u, status: :created
         else
           render json: "queue not save", status: :unprocessable_entity
@@ -71,7 +70,7 @@ class QueueUsersController < ApplicationController
   def update
     queue_u = QueueUser.find_by_id(params[:id])
     if !["0", "3"].include?(queue_u.cusStatus) && queue_u.update(queue_user_params)
-      ActionCable.server.broadcast 'QueueManagmentChannel', {action: 'update', queue: queue_u}
+      ActionCable.server.broadcast('QueueManagmentChannel', {action: 'update', queue: queue_u})
       render json:queue_u, status: :ok
     else
       render json: "คิวนี้เสร็จสิ้นไปแล้ว", status: :unprocessable_entity
@@ -83,7 +82,7 @@ class QueueUsersController < ApplicationController
   def destroy
     queue = QueueUser.find_by_id(params[:id])
     if queue.destroy
-      ActionCable.server.broadcast 'QueueManagmentChannel', {action: 'destroy', queue: queue.id}
+      ActionCable.server.broadcast('QueueManagmentChannel', {action: 'destroy', queue: queue.id})
       render json: { message: 'Queue was successfully destroyed' }
     else
       render json: { error: 'Queue not found' }, status: :not_found
