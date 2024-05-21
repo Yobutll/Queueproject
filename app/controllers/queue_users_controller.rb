@@ -82,7 +82,6 @@ class QueueUsersController < ApplicationController
   def destroy
     queue = QueueUser.find_by_id(params[:id])
     if queue.destroy
-      ActionCable.server.broadcast('QueueManagmentChannel', {action: 'destroy', queue: queue.id})
       render json: { message: 'Queue was successfully destroyed' }
     else
       render json: { error: 'Queue not found' }, status: :not_found

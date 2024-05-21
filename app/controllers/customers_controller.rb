@@ -52,7 +52,7 @@ class CustomersController < ApplicationController
   def update
     customer = Customer.find_by_id(params[:id])
     if customer.update(customer_params)
-      ActionCable.server.broadcast('QueueManagmentChannel', {action: 'update', customer: customer})
+      
       render json:customer , status: :ok
     else
       render json: @customer.errors, status: :unprocessable_entity
