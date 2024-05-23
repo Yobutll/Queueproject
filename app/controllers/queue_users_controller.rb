@@ -4,7 +4,6 @@ class QueueUsersController < ApplicationController
   # GET /queue_users.json
   # GET /queue_users?status=3
 
-
   
   def index
     date = params[:date]
@@ -54,6 +53,7 @@ class QueueUsersController < ApplicationController
       else
         queue_u = QueueUser.create(queue_user_params)
         ActionCable.server.broadcast('QueueManagmentChannel', {action: 'create', queue: queue_u}) 
+        
         if queue_u
           render json: queue_u, status: :created
         else
@@ -64,6 +64,8 @@ class QueueUsersController < ApplicationController
       render json: { error: 'customer_id is required' }, status: :unprocessable_entity
     end
   end
+  
+  
 
   # PATCH/PUT /queue_users/1
   # PATCH/PUT /queue_users/1.json

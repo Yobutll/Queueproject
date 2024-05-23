@@ -8,10 +8,9 @@ class QueueUser < ApplicationRecord
     after_create :notify_if_queue_created
     validates :cusName, presence: true
     validates :cusSeat, presence: true 
-    
+
     Dotenv.load
      
-
     
     def push_message_calling(uid_Line)    
       if cusStatus == "3"

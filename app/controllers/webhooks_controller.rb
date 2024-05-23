@@ -52,6 +52,7 @@ class WebhooksController < ApplicationController
       status 200
       return
     end
+    
     computed_signature = Base64.strict_encode64(digest)
     puts (computed_signature).inspect
     puts (received_signature).inspect
