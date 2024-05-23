@@ -8,9 +8,14 @@ class CustomersController < ApplicationController
   def index
     uid_line = params[:uidLine]
     customer = Customer.find_by(uidLine: uid_line)
+    queueActive = QueueUser.where(customer_id: customer.id).where(cusStatus: ["1", "2"]).first
     puts customer
-    if customer.present?
-      render json: {exist: 1 , customer: customer}
+    if customer.present? 
+      if queueActive.present?
+        render json: {exist: 1 , customer: customer, queueActive: true}
+      else
+        render json: {exist: 1 , customer: customer, queueActive: false}
+      end
     else
       render json: {exist: 0}
     end
