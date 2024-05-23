@@ -53,7 +53,7 @@ class QueueUser < ApplicationRecord
     
         response = Faraday.post(url) do |req|
             req.headers['Content-Type'] = 'application/json'
-            req.headers['Authorization'] = "Bearer s0MjEaRpFdcMZE9N+1S97hSC1pqReiJLht23P0m3SvLrGQW+NXh8378fsY6zVoyXCagldn/6Qql342wD0vxZe58u3PU7jFab7V1EXgehi6HbjJlhv9uKAvUvxMWlCUiYSAXII0PVqwiDfs1KrOlhUgdB04t89/1O/w1cDnyilFU="
+            req.headers['Authorization'] = "Bearer FfG86IKwyV5kNy4EX8q3OlpS8X3xUxscyGFamzqtRDLlKmNjdvTkqDz8ic1v5jRK56AOaJa8fR4Ge6oMNdXmLClwbJO6ocgtH9nu2WWc+Qpaug7s3c7aFymI6sqmDTPFtPrZD2B7Mo+u0o2B+2oYoQdB04t89/1O/w1cDnyilFU="
             req.body = message_json
             
         end
