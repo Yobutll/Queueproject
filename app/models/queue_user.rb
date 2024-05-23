@@ -14,7 +14,7 @@ class QueueUser < ApplicationRecord
     def push_message_calling(uid_Line)    
       if cusStatus == "3"
           message_data = {
-          to: uid_Line,
+          to: customer.uidLine,
           messages: [
               { type: "text", text: "เสร็จสิ้นแล้วขอบคุณที่ใช้บริการ" },
               
@@ -23,7 +23,7 @@ class QueueUser < ApplicationRecord
       end
       if cusStatus == "2"
         message_data = {
-          to: uid_Line,
+          to: customer.uidLine,
           messages: [
               { type: "text", text: "ถึงคิวของคุณแล้วกรุณาไปที่หน้าแคชเชียร์" },
               
@@ -32,7 +32,7 @@ class QueueUser < ApplicationRecord
       end
       if cusStatus == "1"
         message_data = {
-          to: uid_Line,
+          to: customer.uidLine,
           messages: [
               { type: "text", text: "จองคิวสำเร็จ ได้คิว #{self.qNumber}" },
               
@@ -41,7 +41,7 @@ class QueueUser < ApplicationRecord
       end
       if cusStatus == "0"
         message_data = {
-          to: uid_Line,
+          to: customer.uidLine,
           messages: [
               { type: "text", text: "ยกเลิกคิวสำเร็จ" },
               
