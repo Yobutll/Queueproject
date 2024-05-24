@@ -74,6 +74,7 @@ class QueueUsersController < ApplicationController
     if !["0", "3"].include?(queue_u.cusStatus) 
       if queue_u.cusStatus == queue_user_params[:cusStatus]
         queue_u.notify_if_queue_called_again
+        render json:queue_u, status: :ok
       elsif queue_u.update(queue_user_params)
         ActionCable.server.broadcast('QueueManagmentChannel', {action: 'update', queue: queue_u})
         render json:queue_u, status: :ok
