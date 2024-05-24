@@ -71,9 +71,13 @@ class QueueUsersController < ApplicationController
   # PATCH/PUT /queue_users/1.json
   def update
     queue_u = QueueUser.find_by_id(params[:id])
-    if !["0", "3"].include?(queue_u.cusStatus) && queue_u.update(queue_user_params)
+    if !["0", "3"].include?(queue_u.cusStatus) 
+      if queue_u.update(queue_user_params)
       ActionCable.server.broadcast('QueueManagmentChannel', {action: 'update', queue: queue_u})
-      render json:queue_u, status: :ok
+        render json:queue_u, status: :ok
+      else
+        queue_u.notify_if_queue_called_again
+      end
     else
       render json: "คิวนี้เสร็จสิ้นไปแล้ว", status: :unprocessable_entity
     end

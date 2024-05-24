@@ -17,7 +17,6 @@ class QueueUser < ApplicationRecord
           to: customer.uidLine,
           messages: [
               { type: "text", text: "เสร็จสิ้นแล้วขอบคุณที่ใช้บริการ" },
-              
             ]
           }
       end
@@ -26,7 +25,6 @@ class QueueUser < ApplicationRecord
           to: customer.uidLine,
           messages: [
               { type: "text", text: "ถึงคิวของคุณแล้วกรุณาไปที่หน้าแคชเชียร์" },
-              
             ]
           }
       end
@@ -35,7 +33,6 @@ class QueueUser < ApplicationRecord
           to: customer.uidLine,
           messages: [
               { type: "text", text: "จองคิวสำเร็จ ได้คิว #{self.qNumber}" },
-              
             ]
           }
       end
@@ -44,13 +41,11 @@ class QueueUser < ApplicationRecord
           to: customer.uidLine,
           messages: [
               { type: "text", text: "ยกเลิกคิวสำเร็จ" },
-              
             ]
           }
       end
         message_json = JSON.dump(message_data)
         url = "https://api.line.me/v2/bot/message/push"
-    
         response = Faraday.post(url) do |req|
             req.headers['Content-Type'] = 'application/json'
             req.headers['Authorization'] = "Bearer FfG86IKwyV5kNy4EX8q3OlpS8X3xUxscyGFamzqtRDLlKmNjdvTkqDz8ic1v5jRK56AOaJa8fR4Ge6oMNdXmLClwbJO6ocgtH9nu2WWc+Qpaug7s3c7aFymI6sqmDTPFtPrZD2B7Mo+u0o2B+2oYoQdB04t89/1O/w1cDnyilFU="
@@ -58,6 +53,12 @@ class QueueUser < ApplicationRecord
             
         end
         puts "response: #{response.body}"
+    end
+
+    def notify_if_queue_called_again
+      if cusStatus == "2"
+        push_message_calling(customer.uidLine)
+      end
     end
 
     def set_qNumber
