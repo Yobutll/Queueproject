@@ -78,11 +78,19 @@ class WebhooksController < ApplicationController
                 else
                   queue = get_previous_queue_users_count(customer_data)
                   if event.message['text'].include?("ติดตามสถานะ")
-                    message = {
+                    if queue == 0
+                      message = {
+                        type: 'text',
+                        text: "อีกนิดเดียวครับ รอแคชเชียร์เรียกได้เลย"
+                      }
+                      client.reply_message(event['replyToken'], message)
+                    else
+                      message = {
                         type: 'text',
                         text: "มีคิวก่อนหน้าคุณ#{queue}คิว"
-                    }
-                    client.reply_message(event['replyToken'], message)
+                      }
+                      client.reply_message(event['replyToken'], message)
+                    end
                   end
                 end
               end
