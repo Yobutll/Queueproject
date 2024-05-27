@@ -3,7 +3,7 @@ require 'jwt'
 class ApplicationController < ActionController::API
   SECRET_KEY_BASE = Rails.application.secret_key_base
   before_action :authenticate_request
-
+ 
 
   def authenticate_request
     header = request.headers['Authorization']
@@ -25,5 +25,4 @@ class ApplicationController < ActionController::API
       render json: { error: 'Not Authorized' }, status: 401
     end
   end
-
 end
