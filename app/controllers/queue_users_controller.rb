@@ -36,8 +36,9 @@ class QueueUsersController < ApplicationController
     cus_id = params[:id]
     queue = QueueUser.where(customer_id: cus_id).where(cusStatus: ["1", "2"]).first
     if queue
+      token_line = Customer.find_by_id(cus_id).tokenLine
       q_count = QueueUser.where("created_at < ?", queue.created_at).where(cusStatus: ["1", "2"]).count
-      render json: { queue_count: q_count, queue:queue}
+      render json: { queue_count: q_count, queue: queue, tokenLine: token_line}
     else
       render json: { error: 'Queue not found' }, status: :not_found
     end
