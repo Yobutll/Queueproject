@@ -1,3 +1,5 @@
+require 'jwt'
+
 class AuthenticationController < ApplicationController
   skip_before_action :authenticate_request 
 
@@ -9,10 +11,10 @@ class AuthenticationController < ApplicationController
       # Create token
       payload = { admin_id: @admin.id }
       token = JsonWebToken.jwt_encode(payload)
-      Token.create(admins_id: @admin.id, tokenAdmin: token, expiredAdmin: Time.now + 1.minutes, status: true) 
+      Token.create(admins_id: @admin.id, tokenAdmin: token, expiredAdmin: Time.now + 24.hours, status: true) 
       render json: { token: token }, status: :ok
     else
-      head :unauthorized
+      render json: { error: 'Invalid username or password' }
     end
   end
 
@@ -20,7 +22,7 @@ class AuthenticationController < ApplicationController
     header = request.headers['Authorization']
     token = header.split(' ').last if header
     access_token = Token.find_by(tokenAdmin: token)
-    # If logout will destroy present token 
+    # If logout will destroy current token 
     if access_token.present?
       access_token.destroy
       render json: { status: "Token deleted" }
