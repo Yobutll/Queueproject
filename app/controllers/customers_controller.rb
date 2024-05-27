@@ -37,7 +37,6 @@ class CustomersController < ApplicationController
     uid_line = customer_params[:uidLine]
     customers = Customer.find_by(uidLine: uid_line)
     token_line = customer_params[:tokenLine]
-    decoded = JsonWebToken.jwt_decode(token_line)
     # queueNew = customer_params[:queueNew]
     if customers.present?
       render json: { error: 'Customer already exists' }, status: :unprocessable_entity
@@ -45,7 +44,6 @@ class CustomersController < ApplicationController
       customer = Customer.new(uidLine: uid_line, tokenLine: token_line)
       customer.queueNew = customer_params[:queueNew]
       if customer.save 
-        puts decoded
         render json: customer, status: :created
       else
         render json: customer.errors, status: :unprocessable_entity
