@@ -25,7 +25,8 @@ class CustomersController < ApplicationController
   def show
     customer = Customer.find_by_id(params[:id])
     if customer
-      render json: customer
+      token_line = customer.tokenLine
+      render json: {tokenLine: token_line}
     else
       render json: { error: 'Customer not found' }, status: :not_found
     end
