@@ -1,7 +1,7 @@
 class Admin < ApplicationRecord
     has_secure_password
     validates :username, presence: true, uniqueness: true
-    validates :password, presence: true
+    validates :password, presence: {message: "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง"}
     #validates :password_digest, presence: true
     has_many :tokens
     after_create :encrypt_pin_code
