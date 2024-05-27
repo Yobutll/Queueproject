@@ -2,7 +2,7 @@ class CustomersController < ApplicationController
   #skip_before_action :verify_authenticity_token
   # GET /customers
   # GET /customers.json
-  skip_before_action :authenticate_request , only: [:create, :index, :show, :destroy, :update]
+  skip_before_action :authenticate_request , only: [:create, :index, :show, :destroy, :update, :check_token]
  
 
   def index
@@ -29,6 +29,17 @@ class CustomersController < ApplicationController
       render json: {tokenLine: token_line}
     else
       render json: { error: 'Customer not found' }, status: :not_found
+    end
+  end
+
+
+  def check_token
+    token_line = params[:tokenLine]
+    customer = Customer.find_by(tokenLine: token_line)
+    if customer
+      render json: {match: true}
+    else
+      render json: {match: false}
     end
   end
 

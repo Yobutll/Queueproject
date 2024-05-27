@@ -23,7 +23,7 @@ Rails.application.routes.draw do
   # Customer
   match "customers", to: "customers#index", via: [:get, :post]
   match "customers/create", to: "customers#create", via: [:get, :post]
-
+  match "check_token", to: "customers#check_token", via: [:get]
   # Queue
   match "queue_users", to: "queue_users#index", via: [:get, :post]
   match "queue_users/create", to: "queue_users#create", via: [:get, :post]
