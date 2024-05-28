@@ -11,6 +11,7 @@ class QueueUsersController < ApplicationController
     uidLine = header.split(' ').last if header
     token_admin = Token.find_by(tokenAdmin: uidLine)
     token_customer = Customer.find_by(uidLine: uidLine)
+    puts uidLine
     if token_admin || token_customer
       # render json: { status: 'success' }
     else

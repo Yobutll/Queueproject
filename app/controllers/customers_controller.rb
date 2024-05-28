@@ -47,8 +47,8 @@ class CustomersController < ApplicationController
 
 
   def check_token
-    token_line = params[:tokenLine]
-    customer = Customer.find_by(tokenLine: token_line)
+    uidline = params[:uidLine]
+    customer = Customer.find_by(uidLine: uidline)
     if customer
       render json: {match: true, customer_id: customer.id}
     else
