@@ -8,7 +8,7 @@ class QueueUsersController < ApplicationController
   # เพื่มอันนี้
   def authen_queue
     header = request.headers['Authorization']
-    token = header.split(' ').last if header
+    uidLine = header.split(' ').last if header
     token_admin = Token.find_by(tokenAdmin: token)
     token_customer = Customer.find_by(uidLine: uidLine)
     if token_admin || token_customer
