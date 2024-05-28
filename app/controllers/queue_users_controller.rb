@@ -9,7 +9,7 @@ class QueueUsersController < ApplicationController
   def authen_queue
     header = request.headers['Authorization']
     uidLine = header.split(' ').last if header
-    token_admin = Token.find_by(tokenAdmin: token)
+    token_admin = Token.find_by(tokenAdmin: uidLine)
     token_customer = Customer.find_by(uidLine: uidLine)
     if token_admin || token_customer
       # render json: { status: 'success' }
