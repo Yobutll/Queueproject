@@ -1,9 +1,7 @@
 require 'jwt'
-
 class ApplicationController < ActionController::API
   SECRET_KEY_BASE = Rails.application.secret_key_base
   before_action :authenticate_request
- 
 
   def authenticate_request
     header = request.headers['Authorization']
@@ -27,6 +25,23 @@ class ApplicationController < ActionController::API
     end
   end
 
+  def authenticate_user_request
+    header = request.headers['Authorization']
+    token = header.split(' ').last if header
+    decoded_token = JWT.decode(token, nil, false)
+    token_admin = Token.find_by(tokenAdmin: token)
+    uidLine = decoded_token.first['sub']
+    if token || token_admin
+      user = Customer.find_by(uidLine: uidLine)
+      if user || token_admin
+       
+      else
+        render json: { error: 'User doesnt exist' }, status: :unauthorized
+      end  
+    else
+      render json: { error: 'Not Authorized' }, status: :unauthorized
+    end
+  end
 
-  
+
 end

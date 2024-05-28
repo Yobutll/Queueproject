@@ -3,7 +3,7 @@ class CustomersController < ApplicationController
   # GET /customers
   # GET /customers.json
   skip_before_action :authenticate_request , only: [:create, :index, :show, :destroy, :update, :check_token]
-  # before_action :authen_queue, only: [ :show, :destroy]
+  
 
 
   # def authen_queue
@@ -47,8 +47,10 @@ class CustomersController < ApplicationController
 
 
   def check_token
-    uidline = params[:tokenLine]
-    customer = Customer.find_by(uidLine: uidline)
+    token = params[:tokenLine]
+    decoded_token = JWT.decode(token, nil, false)
+    uidLine = decoded_token.first['sub']
+    customer = Customer.find_by(uidLine: uidLine)
     if customer
       render json: {match: true, customer_id: customer.id}
     else
@@ -61,12 +63,11 @@ class CustomersController < ApplicationController
   def create
     uid_line = customer_params[:uidLine]
     customers = Customer.find_by(uidLine: uid_line)
-    token_line = customer_params[:tokenLine]
     # queueNew = customer_params[:queueNew]
     if customers.present?
       render json: { error: 'Customer already exists' }, status: :unprocessable_entity
     else
-      customer = Customer.new(uidLine: uid_line, tokenLine: token_line)
+      customer = Customer.new(uidLine: uid_line)
       customer.queueNew = customer_params[:queueNew]
       if customer.save 
         render json: customer, status: :created
@@ -81,8 +82,7 @@ class CustomersController < ApplicationController
   # PATCH/PUT /customers/1.json
   def update
     customer = Customer.find_by_id(params[:id])
-    token_line = customer_params[:tokenLine]
-    if customer.update(tokenLine:token_line)
+    if customer.update()
       render json:customer , status: :ok
     else
       render json: @customer.errors, status: :unprocessable_entity
@@ -110,6 +110,6 @@ class CustomersController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def customer_params
-      params.require(:customer).permit(:uidLine, :tokenLine, queueNew: [:cusName, :cusPhone, :cusSeat])
+      params.require(:customer).permit(:uidLine, queueNew: [:cusName, :cusPhone, :cusSeat])
     end
 end

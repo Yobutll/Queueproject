@@ -1,23 +1,27 @@
+
 class QueueUsersController < ApplicationController
   skip_before_action :authenticate_request 
+  before_action :authenticate_user_request
   # GET /queue_users
   # GET /queue_users.json
   # GET /queue_users?status=3 
-  before_action :authen_queue
+  # before_action :authen_queue
 
   # เพื่มอันนี้
-  def authen_queue
-    header = request.headers['Authorization']
-    uidLine = header.split(' ').last if header
-    token_admin = Token.find_by(tokenAdmin: uidLine)
-    token_customer = Customer.find_by(uidLine: uidLine)
-    puts uidLine
-    if token_admin || token_customer
-      # render json: { status: 'success' }
-    else
-      render json: { error: 'Not Authorzed' }
-    end 
-  end
+  # def authen_queue
+  #   header = request.headers['Authorization']
+  #   uidLine = header.split(' ').last if header
+  #   token_admin = Token.find_by(tokenAdmin: uidLine)
+  #   token_customer = Customer.find_by(uidLine: uidLine)
+  #   puts uidLine
+  #   if token_admin || token_customer
+  #     # render json: { status: 'success' }
+  #   else
+  #     render json: { error: 'Not Authorzed' }
+  #   end 
+  # end
+
+
 
   def index
     date = params[:date]
@@ -50,9 +54,8 @@ class QueueUsersController < ApplicationController
     cus_id = params[:id]
     queue = QueueUser.where(customer_id: cus_id).where(cusStatus: ["1", "2"]).first
     if queue
-      token_line = Customer.find_by_id(cus_id).tokenLine
       q_count = QueueUser.where("created_at < ?", queue.created_at).where(cusStatus: ["1", "2"]).count
-      render json: { queue_count: q_count, queue: queue, tokenLine: token_line}
+      render json: { queue_count: q_count, queue: queue}
     else
       render json: { error: 'Queue not found' }, status: :not_found
     end
