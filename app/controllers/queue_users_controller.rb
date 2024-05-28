@@ -1,11 +1,23 @@
 class QueueUsersController < ApplicationController
-  skip_before_action :authenticate_request , only: [:create, :update, :show, :destroy]
+  skip_before_action :authenticate_request 
   # GET /queue_users
   # GET /queue_users.json
   # GET /queue_users?status=3 
-  # before_action :authen_queue
+  before_action :authen_queue
 
-  
+  # เพื่มอันนี้
+  def authen_queue
+    header = request.headers['Authorization']
+    token = header.split(' ').last if header
+    token_admin = Token.find_by(tokenAdmin: token)
+    token_customer = Customer.find_by(tokenLine: token)
+    if token_admin || token_customer
+      # render json: { status: 'success' }
+    else
+      render json: { error: 'Not Authorzed' }
+    end 
+  end
+
   def index
     date = params[:date]
     qstatus = params[:status]

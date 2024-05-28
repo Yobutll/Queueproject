@@ -27,34 +27,6 @@ class ApplicationController < ActionController::API
     end
   end
 
-  # เพื่มอันนี้
-  # def authen_line
-  #   header = request.headers['Authorization']
-  #   token = header.split(' ').last if header
-  #   decoded_token = JWT.decode(token, nil, false)
-  #   expiration_time = Time.at(decoded_token.first['exp'])
-  #   current_time = Time.now
-  #   customer = Customer.find_by(tokenLine: token)
-  #   if customer.present? 
-  #     if expiration_time < current_time
-  #       Customer.where('"expiration_time" < ?', Time.now).destroy
-  #       render json: { status: 'destros success' }
-  #     else
-  #       render json: { error: 'Not Authorzed' }
-  #     end
-  #   end  
-  # end
 
-  # def authen_queue
-  #   header = request.headers['Authorization']
-  #   token = header.split(' ').last if header
-  #   token_admin = Token.find_by(tokenAdmin: token)
-  #   token_customer = Customer.find_by(tokenLine: token)
-  #   if token_admin || token_customer
-  #     # render json: { status: 'success' }
-  #   else
-  #     render json: { error: 'Not Authorzed' }
-  #   end 
-  # end
   
 end

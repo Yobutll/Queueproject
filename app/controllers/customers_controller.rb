@@ -3,8 +3,20 @@ class CustomersController < ApplicationController
   # GET /customers
   # GET /customers.json
   skip_before_action :authenticate_request , only: [:create, :index, :show, :destroy, :update, :check_token]
-  # skip_before_action :authen_line, only: [:create] # เพื่มอันนี้
- 
+  before_action :authen_queue, only: [:index, :show, :destroy, :update]
+
+
+  def authen_queue
+    header = request.headers['Authorization']
+    token = header.split(' ').last if header
+    token_admin = Token.find_by(tokenAdmin: token)
+    token_customer = Customer.find_by(tokenLine: token)
+    if token_admin || token_customer
+      # render json: { status: 'success' }
+    else
+      render json: { error: 'Not Authorzed' }
+    end 
+  end
 
   def index
     uid_line = params[:uidLine]
