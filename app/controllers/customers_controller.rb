@@ -3,7 +3,7 @@ class CustomersController < ApplicationController
   # GET /customers
   # GET /customers.json
   skip_before_action :authenticate_request , only: [:create, :index, :show, :destroy, :update, :check_token]
-  before_action :authen_queue, only: [ :show, :destroy, :update]
+  before_action :authen_queue, only: [ :show, :destroy]
 
 
   def authen_queue
