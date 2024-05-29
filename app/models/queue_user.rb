@@ -32,7 +32,7 @@ class QueueUser < ApplicationRecord
         message_data = {
           to: customer.uidLine,
           messages: [
-              { type: "text", text: "จองคิวสำเร็จ ✅ \nคิวปัจจุบันของคุณคือ #{self.qNumber} \nจำนวนลูกค้า #{self.cusSeat}" },
+              { type: "text", text: "จองคิวสำเร็จ ✅ \nคิวปัจจุบันของคุณคือ #{self.qNumber} \nจำนวนลูกค้า #{self.cusSeat} ท่าน" },
             ]
           }
       end
