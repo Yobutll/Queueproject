@@ -1,6 +1,6 @@
 
 class QueueUsersController < ApplicationController
-  skip_before_action :authenticate_request 
+  skip_before_action :authenticate_request , only: [:create, :show, :destroy, :update]
   before_action :authenticate_user_request
   # GET /queue_users
   # GET /queue_users.json
