@@ -40,7 +40,7 @@ class QueueUser < ApplicationRecord
         message_data = {
           to: customer.uidLine,
           messages: [
-              { type: "text", text: "คุณได้ทำการยกเลอกคิวแล้ว \nกรุณากดบัตรคิวหากต้องการดำเนินการใหม่อีกครั้ง" },
+              { type: "text", text: "คุณได้ทำการยกเลิกคิวแล้ว \nกรุณากดบัตรคิวหากต้องการดำเนินการใหม่อีกครั้ง" },
             ]
           }
       end
