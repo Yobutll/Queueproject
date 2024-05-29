@@ -87,7 +87,7 @@ class WebhooksController < ApplicationController
                     else
                       message = {
                         type: 'text',
-                        text: "หมายเลขคิวปัจจุบันของคุณคือ #{customer_data.cusSeat}\nจำนวนคิวก่อนหน้าคุณ #{queue} คิว"
+                        text: "หมายเลขคิวปัจจุบันของคุณคือ #{customer_data["cusSeat"]}\nจำนวนคิวก่อนหน้าคุณ #{queue} คิว"
                       }
                       client.reply_message(event['replyToken'], message)
                     end
