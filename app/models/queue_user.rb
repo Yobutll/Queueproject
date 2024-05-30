@@ -6,6 +6,7 @@ class QueueUser < ApplicationRecord
     before_create :set_qNumber
     after_update :notify_if_status_changed
     after_create :notify_if_queue_created
+    validates :qNumber, uniqueness: true
     validates :cusName, presence: true
     validates :cusSeat, presence: true 
 
@@ -83,7 +84,7 @@ class QueueUser < ApplicationRecord
         end
       end
     end
-    
+
     private
     def status_changed_to_3?
       cusStatus_changed? && cusStatus == "3"
