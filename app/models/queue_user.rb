@@ -63,7 +63,7 @@ class QueueUser < ApplicationRecord
 
     def set_qNumber
       # Lock the table to prevent race conditions
-      QueueUser.transaction do
+      ActiveRecord::Base.transaction do
         max_qNumber = QueueUser.lock.order('"qNumber" DESC').first&.qNumber
         if max_qNumber
           letter = max_qNumber[/[A-Za-z]+/] || "A"
@@ -83,7 +83,7 @@ class QueueUser < ApplicationRecord
         end
       end
     end
-
+    
     private
     def status_changed_to_3?
       cusStatus_changed? && cusStatus == "3"
