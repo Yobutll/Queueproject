@@ -67,7 +67,11 @@ class QueueUser < ApplicationRecord
         last_queue_user = QueueUser.order(qNumber: :desc).lock.first
         new_qNumber = last_queue_user ? last_queue_user.qNumber.next : 'A001'
         while QueueUser.exists?(qNumber: new_qNumber)
-          new_qNumber = new_qNumber.next
+          if new_qNumber[-3..-1] == '999'
+            new_qNumber = new_qNumber[0].next + '001'
+          else
+            new_qNumber = new_qNumber.next
+          end
         end
         self.qNumber = new_qNumber
       end
