@@ -2,27 +2,10 @@
 class QueueUsersController < ApplicationController
   skip_before_action :authenticate_request , only: [:create, :show, :destroy, :update]
   before_action :authenticate_user_request
+  
   # GET /queue_users
   # GET /queue_users.json
   # GET /queue_users?status=3 
-  # before_action :authen_queue
-
-  # เพื่มอันนี้
-  # def authen_queue
-  #   header = request.headers['Authorization']
-  #   uidLine = header.split(' ').last if header
-  #   token_admin = Token.find_by(tokenAdmin: uidLine)
-  #   token_customer = Customer.find_by(uidLine: uidLine)
-  #   puts uidLine
-  #   if token_admin || token_customer
-  #     # render json: { status: 'success' }
-  #   else
-  #     render json: { error: 'Not Authorzed' }
-  #   end 
-  # end
-
-
-
   def index
     date = params[:date]
     qstatus = params[:status]
@@ -64,26 +47,27 @@ class QueueUsersController < ApplicationController
   # POST /queue_users
   # POST /queue_users.json
   def create
-    if queue_user_params[:customer_id].present?
-      customer = QueueUser.where(customer_id: queue_user_params[:customer_id]).where(cusStatus: ["1", "2"])
-      if customer.present?
-        render json: { error: '1 Queue per 1 acc' }, status: :unprocessable_entity
-      else
-        queue_u = QueueUser.create(queue_user_params)
-        if queue_u.save
-          ActionCable.server.broadcast('QueueManagmentChannel', {action: 'create', queue: queue_u}) 
-          render json: queue_u, status: :created
+    ActiveRecord::Base.transaction do
+      if queue_user_params[:customer_id].present?
+        customer = QueueUser.where(customer_id: queue_user_params[:customer_id]).where(cusStatus: ["1", "2"])
+        if customer.present?
+          render json: { error: '1 Queue per 1 acc' }, status: :unprocessable_entity
         else
-          render json: "queue not save", status: :unprocessable_entity
+          queue_u = QueueUser.create(queue_user_params)
+          if queue_u.save
+            ActionCable.server.broadcast('QueueManagmentChannel', {action: 'create', queue: queue_u}) 
+            render json: queue_u, status: :created
+          else
+            render json: "queue not save", status: :unprocessable_entity
+          end
         end
+      else
+        render json: { error: 'customer_id is required' }, status: :unprocessable_entity
       end
-    else
-      render json: { error: 'customer_id is required' }, status: :unprocessable_entity
     end
   end
   
   
-
   # PATCH/PUT /queue_users/1
   # PATCH/PUT /queue_users/1.json
   def update

@@ -77,32 +77,6 @@ class QueueUser < ApplicationRecord
       end
     end
 
-    # def set_qNumber
-    #   # Lock the table to prevent race conditions
-    #   ActiveRecord::Base.transaction do
-    #     max_qNumber = QueueUser.order('"qNumber" DESC').lock!.first&.qNumber
-    #     if max_qNumber
-    #       letter = max_qNumber[/[A-Za-z]+/] || "A"
-    #       number = max_qNumber[/\d+/].to_i
-    #       number += 1
-    #       while QueueUser.exists?(qNumber: self.qNumber)
-    #         number += 1
-    #         if number >= 999
-    #           letter = letter.next
-    #           number = 1
-    #         end
-    #         if letter == "Z" && number == 999
-    #           letter = "A"
-    #           number = 1
-    #         end
-    #         self.qNumber = letter + number.to_s.rjust(3, '0')
-    #       end
-    #     else
-    #       self.qNumber = "A001"
-    #     end
-    #   end
-    # end
-
     private
     def status_changed_to_3?
       cusStatus_changed? && cusStatus == "3"
