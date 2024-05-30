@@ -61,7 +61,7 @@ class QueueUser < ApplicationRecord
       end
     end
 
-    def self.set_qNumber
+    def set_qNumber
       # Lock the table to prevent race conditions
       QueueUser.transaction do
         max_qNumber = QueueUser.lock.order("qNumber DESC").first&.qNumber
