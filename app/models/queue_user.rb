@@ -61,23 +61,26 @@ class QueueUser < ApplicationRecord
       end
     end
 
-    def set_qNumber
-      max_qNumber = QueueUser.all.sort_by { |q| [q.qNumber[0], q.qNumber[1..-1].to_i] }.last&.qNumber
-      if max_qNumber
-        letter = max_qNumber[/[A-Za-z]+/] || "A"
-        number = max_qNumber[/\d+/].to_i
-        number += 1
-        if number >= 999
-          letter = letter.next
-          number = 1
+    def self.set_qNumber
+      # Lock the table to prevent race conditions
+      QueueUser.transaction do
+        max_qNumber = QueueUser.lock.order("qNumber DESC").first&.qNumber
+        if max_qNumber
+          letter = max_qNumber[/[A-Za-z]+/] || "A"
+          number = max_qNumber[/\d+/].to_i
+          number += 1
+          if number >= 999
+            letter = letter.next
+            number = 1
+          end
+          if letter == "Z" && number == 999
+            letter = "A"
+            number = 1
+          end
+          self.qNumber = letter + number.to_s.rjust(3, '0')
+        else
+          self.qNumber = "A001"
         end
-        if letter == "Z" && number == 999
-          letter = "A"
-          number = 1
-        end
-        self.qNumber = letter + number.to_s.rjust(3, '00')
-      else
-        self.qNumber = "A001"
       end
     end
 
