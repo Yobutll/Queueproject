@@ -6,7 +6,6 @@ class QueueUser < ApplicationRecord
     before_create :set_qNumber
     after_update :notify_if_status_changed
     after_create :notify_if_queue_created
-    validates :qNumber, uniqueness: true
     validates :cusName, presence: true
     validates :cusSeat, presence: true 
 
