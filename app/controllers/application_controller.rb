@@ -25,7 +25,7 @@ class ApplicationController < ActionController::API
     decoded_token = JWT.decode(token, nil, false)
     token_admin = Token.find_by(tokenAdmin: token)
     uidLine = decoded_token.first['sub']
-    if token || token_admin
+    if token
       user = Customer.find_by(uidLine: uidLine)
       if user || token_admin
        
@@ -36,6 +36,4 @@ class ApplicationController < ActionController::API
       render json: { error: 'Not Authorized' }, status: :unauthorized
     end
   end
-
-
 end
