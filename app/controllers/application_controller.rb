@@ -13,7 +13,6 @@ class ApplicationController < ActionController::API
         if  Token.where(status: false).destroy_all
           
         end
-        
     else
       render json: { error: 'Not Authorized' }
     end
