@@ -42,7 +42,7 @@ class WebhooksController < ApplicationController
 
   def webhook
     http_request_body = request.body.read # Request body string
-    # Extract signature from request header
+    # Extract signature from request headercd
     received_signature = request.env['HTTP_X_LINE_SIGNATURE']
     
     # Compute HMAC-SHA256 digest

@@ -54,7 +54,7 @@ class QueueUsersController < ApplicationController
           render json: { error: '1 Queue per 1 acc' }, status: :unprocessable_entity
         else
           queue_u = QueueUser.create(queue_user_params)
-          if queue_u.save
+          if queue_u.persisted?
             ActionCable.server.broadcast('QueueManagmentChannel', {action: 'create', queue: queue_u}) 
             render json: queue_u, status: :created
           else
