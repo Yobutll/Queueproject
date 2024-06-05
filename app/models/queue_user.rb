@@ -12,14 +12,6 @@ class QueueUser < ApplicationRecord
     Dotenv.load
      
     def push_message_calling(uid_Line)    
-      if cusStatus == "3"
-          message_data = {
-          to: customer.uidLine,
-          messages: [
-              { type: "text", text: "เสร็จสิ้นการรอคิว ✅ \nขอให้มีความสุขในการรับประทานอาหารค่ะ 🙇‍♀️" },
-            ]
-          }
-      end
       if cusStatus == "2"
         message_data = {
           to: customer.uidLine,
@@ -50,7 +42,6 @@ class QueueUser < ApplicationRecord
             req.headers['Content-Type'] = 'application/json'
             req.headers['Authorization'] = "Bearer CfuxW6eoxW6azjplMxN7BqW3pWl4iHB+VpSV0SvEKNKktdMpP4OodSXIF+pxHOlu1mEXQM9fnlz+Aw0nD5wyqT847EWGv4a/SMI/0IKYs8jneE+QUXhzMhs/l3jwTu2wPEg9KPqXqWH3TxAeixIywAdB04t89/1O/w1cDnyilFU="
             req.body = message_json
-            
         end
         puts "response: #{response.body}"
     end
@@ -65,10 +56,10 @@ class QueueUser < ApplicationRecord
     def set_qNumber
       ActiveRecord::Base.transaction do
         last_queue_user = QueueUser.order(qNumber: :desc).lock.first
-        new_qNumber = last_queue_user ? last_queue_user.qNumber.next : 'A001'
+        new_qNumber = last_queue_user ? last_queue_user.qNumber.next : 'A01'
         while QueueUser.exists?(qNumber: new_qNumber)
-          if new_qNumber[-3..-1] == '999'
-            new_qNumber = new_qNumber[0].next + '001'
+          if new_qNumber[-2..-1] == '99'
+            new_qNumber = new_qNumber[0].next + '01'
           else
             new_qNumber = new_qNumber.next
           end
