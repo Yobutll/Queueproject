@@ -80,7 +80,7 @@ class WebhooksController < ApplicationController
                   if event.message['text'].include?("ติดตามสถานะ")
                       message = {
                         type: 'text',
-                        text: "หมายเลขคิวของคุณ #{customer_data["cusName"]} \nคือ #{customer_data["qNumber"]} จำนวนลูกค้า #{customer_data["cusSeat"]} \nจำนวนคิวก่อนหน้าคุณ #{queue} คิว"
+                        text: "หมายเลขคิวของคุณ #{customer_data["cusName"]} \nคือ #{customer_data["qNumber"]} จำนวนลูกค้า #{customer_data["cusSeat"]}ท่าน \nจำนวนคิวก่อนหน้าคุณ #{queue} คิว"
                       }
                       client.reply_message(event['replyToken'], message)
                   end
