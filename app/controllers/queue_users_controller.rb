@@ -52,7 +52,7 @@ class QueueUsersController < ApplicationController
         customer = QueueUser.where(customer_id: queue_user_params[:customer_id]).where(cusStatus: ["1", "2"])
         if customer.present?
           render json: { error: '1 Queue per 1 acc' }, status: :unprocessable_entity
-        else
+        else  
           queue_u = QueueUser.create(queue_user_params)
           if queue_u.persisted?
             ActionCable.server.broadcast('QueueManagmentChannel', {action: 'create', queue: queue_u}) 
