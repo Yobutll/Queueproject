@@ -57,7 +57,7 @@ class QueueUser < ApplicationRecord
         url = "https://api.line.me/v2/bot/message/push"
         response = Faraday.post(url) do |req|
             req.headers['Content-Type'] = 'application/json'
-            req.headers['Authorization'] = "Bearer CfuxW6eoxW6azjplMxN7BqW3pWl4iHB+VpSV0SvEKNKktdMpP4OodSXIF+pxHOlu1mEXQM9fnlz+Aw0nD5wyqT847EWGv4a/SMI/0IKYs8jneE+QUXhzMhs/l3jwTu2wPEg9KPqXqWH3TxAeixIywAdB04t89/1O/w1cDnyilFU="
+            req.headers['Authorization'] = "Bearer nhdIYE2t+or1JQxftDXF5hCXKMWz9MaAVZnkK/kdm+MDbyRpuGTvbau7NDpfccrPyiYSPS4Eyb+lZCnyGYCqchJon2uZ6p+6UaxdsIlgh7WiwqGkQvTDwuVABWnMZHK9iDlObuYQiq9TSTxNm6YvSgdB04t89/1O/w1cDnyilFU="
             req.body = message_json
         end
         puts "response: #{response.body}"
