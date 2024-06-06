@@ -72,8 +72,7 @@ class QueueUser < ApplicationRecord
     end
 
     def notify_if_queue_created
-      is_admin = ApplicationController.new.instance_variable_get(:@is_admin)
-        push_message_calling(customer.uidLine,is_admin)
+        push_message_calling(customer.uidLine,false)
     end
 
     def set_qNumber
