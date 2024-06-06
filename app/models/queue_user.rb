@@ -82,7 +82,7 @@ class QueueUser < ApplicationRecord
 
     private
     def status_changed_to_3?
-      cusStatus_changed? && cusStatus == "3"
+      cusStatus_changed? && (cusStatus == "3" || cusStatus == "0")
     end
 
     def set_queue_finish_at
