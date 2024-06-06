@@ -77,7 +77,7 @@ class QueueUser < ApplicationRecord
 
     def set_qNumber
       ActiveRecord::Base.transaction do
-        last_queue_user = QueueUser.order(qNumber: :desc).lock.first
+        last_queue_user = QueueUser.order(id: :desc).lock.first
         new_qNumber = last_queue_user ? last_queue_user.qNumber.next : 'A01'
         while QueueUser.exists?(qNumber: new_qNumber)
           if new_qNumber[-2..-1] == '99'
