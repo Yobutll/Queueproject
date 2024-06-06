@@ -64,6 +64,7 @@ class QueueUser < ApplicationRecord
     end
 
     def notify_if_queue_called_again
+      is_admin = ApplicationController.new.instance_variable_get(:@is_admin)
       if cusStatus == "2" && callCount <= 1
         push_message_calling(customer.uidLine,is_admin)
         self.update(callCount: callCount + 1)
@@ -99,10 +100,12 @@ class QueueUser < ApplicationRecord
     end
     
     def notify_if_queue_created
+      is_admin = ApplicationController.new.instance_variable_get(:@is_admin)
         push_message_calling(customer.uidLine,is_admin)
     end
     
     def notify_if_status_changed
+      is_admin = ApplicationController.new.instance_variable_get(:@is_admin)
       if saved_change_to_cusStatus? 
         push_message_calling(customer.uidLine,is_admin)
       end
