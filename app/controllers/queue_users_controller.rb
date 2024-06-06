@@ -79,11 +79,10 @@ class QueueUsersController < ApplicationController
     # user = Customer.find_by(uidLine: uidLine)
     queue_u = QueueUser.find_by_id(params[:id])
     if !["0", "3"].include?(queue_u.cusStatus) 
-      if queue_u.cusStatus == queue_user_params[:cusStatus] && token_admin
-        queue_u.is_admin(true)
+      if queue_u.cusStatus == queue_user_params[:cusStatus] 
         queue_u.notify_if_queue_called_again
         render json:queue_u, status: :ok
-      elsif queue_u.update(queue_user_params)
+      elsif queue_u.update(queue_user_params) && token_admin
         ActionCable.server.broadcast('QueueManagmentChannel', {action: 'update', queue: queue_u})
         queue_u.is_admin(true)
         render json:queue_u, status: :ok
