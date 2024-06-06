@@ -26,10 +26,12 @@ class ApplicationController < ActionController::API
     uidLine = decoded_token.first['sub']
     if token
       user = Customer.find_by(uidLine: uidLine)
+      user_id = user.id
+      customer = QueueUser.where(customer_id: user_id).where(cusStatus: ["1", "2"]).first
       if user 
-          user.is_admin(false)
+          customer.is_admin(false)
       elsif token_admin   
-          user.is_admin(true)
+
       else
         render json: { error: 'User doesnt exist' }, status: :unauthorized
       end  
