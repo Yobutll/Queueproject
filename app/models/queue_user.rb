@@ -10,8 +10,14 @@ class QueueUser < ApplicationRecord
     validates :cusSeat, presence: true 
 
     Dotenv.load
-     
-    def push_message_calling(uid_Line)    
+
+    def check_token_admin(token)
+      admin_token = Token.find_by(tokenAdmin: token)
+      admin_token.present?
+    end
+
+    def push_message_calling(uid_Line) 
+      auth_result = authenticate_user_request()   
       if cusStatus == "2" && callCount == 0
         message_data = {
           to: customer.uidLine,
@@ -37,7 +43,7 @@ class QueueUser < ApplicationRecord
           }
       end
       if cusStatus == "0"
-        if token_admin
+        if auth_result[:token_admin]
           message_data = {
             to: customer.uidLine,
             messages: [
