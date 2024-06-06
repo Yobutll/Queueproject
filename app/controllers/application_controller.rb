@@ -26,9 +26,9 @@ class ApplicationController < ActionController::API
     uidLine = decoded_token.first['sub']
     if token
       user = Customer.find_by(uidLine: uidLine)
-      user_id = user.id
-      customer = QueueUser.where(customer_id: user_id).where(cusStatus: ["1", "2"]).first
       if user
+        user_id = user.id
+        customer = QueueUser.where(customer_id: user_id).where(cusStatus: ["1", "2"]).first
         if customer.present? 
             customer.is_admin(false)
         else
