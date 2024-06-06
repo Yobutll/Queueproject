@@ -11,7 +11,7 @@ class QueueUser < ApplicationRecord
 
     Dotenv.load
 
-   def is_admin(is_admin = false)
+   def is_admin(is_admin)
     @is_admin = is_admin
    end
 
