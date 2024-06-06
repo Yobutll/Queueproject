@@ -4,11 +4,8 @@ class QueueUser < ApplicationRecord
     before_save :set_queue_finish_at, if: :status_changed_to_3?
     belongs_to :customer , optional: true
     before_create :set_qNumber
-    after_update :notify_if_status_changed
-    after_create :notify_if_queue_created
     validates :cusName, presence: true
     validates :cusSeat, presence: true 
-    attr_accessor :is_admin
     Dotenv.load
 
     def push_message_calling(uid_Line,is_admin) 
@@ -64,9 +61,8 @@ class QueueUser < ApplicationRecord
     end
 
     def notify_if_queue_called_again
-      is_admin = ApplicationController.new.instance_variable_get(:@is_admin)
       if cusStatus == "2" && callCount <= 1
-        push_message_calling(customer.uidLine,is_admin)
+        push_message_calling(customer.uidLine, false)
         self.update(callCount: callCount + 1)
         ActionCable.server.broadcast('QueueManagmentChannel', {action: 'update', queue: self})
       else
@@ -97,18 +93,6 @@ class QueueUser < ApplicationRecord
 
     def set_queue_finish_at
       self.cusTimeEnd = Time.now
-    end
-    
-    def notify_if_queue_created
-      is_admin = ApplicationController.new.instance_variable_get(:@is_admin)
-        push_message_calling(customer.uidLine,is_admin)
-    end
-    
-    def notify_if_status_changed
-      is_admin = ApplicationController.new.instance_variable_get(:@is_admin)
-      if saved_change_to_cusStatus? 
-        push_message_calling(customer.uidLine,is_admin)
-      end
     end
    
 end
