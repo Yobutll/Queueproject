@@ -37,12 +37,21 @@ class QueueUser < ApplicationRecord
           }
       end
       if cusStatus == "0"
-        message_data = {
-          to: customer.uidLine,
-          messages: [
-              { type: "text", text: "คุณได้ทำการยกเลิกคิวแล้ว \nกรุณากดบัตรคิวหากต้องการดำเนินการใหม่อีกครั้ง" },
-            ]
-          }
+        if token_admin
+          message_data = {
+            to: customer.uidLine,
+            messages: [
+                { type: "text", text: "คิวของคุณถูกยกเลิกโดย admin \nกรุณาติดต่อ admin หากมีข้อสงสัย" },
+              ]
+            }
+        else
+          message_data = {
+            to: customer.uidLine,
+            messages: [
+                { type: "text", text: "คุณได้ทำการยกเลิกคิวแล้ว \nกรุณากดบัตรคิวหากต้องการดำเนินการใหม่อีกครั้ง" },
+              ]
+            }
+        end
       end
         message_json = JSON.dump(message_data)
         url = "https://api.line.me/v2/bot/message/push"
