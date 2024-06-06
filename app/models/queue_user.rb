@@ -12,11 +12,19 @@ class QueueUser < ApplicationRecord
     Dotenv.load
      
     def push_message_calling(uid_Line)    
-      if cusStatus == "2"
+      if cusStatus == "2" && callCount == 0
         message_data = {
           to: customer.uidLine,
           messages: [
               { type: "text", text: "ถึงคิวของคุณแล้ว\nเชิญที่เคาท์เตอร์บริการค่ะ" },
+            ]
+          }
+      end
+      if cusStatus == "2" && callCount >= 1
+        message_data = {
+          to: customer.uidLine,
+          messages: [
+              { type: "text", text: "ทางเราขอเรียนแจ้งว่าหากท่านไม่สามารถมาตามนัดได้ภายในเวลาที่กำหนด ทางเราจำเป็นต้องขอยกเลิกคิวของท่าน เพื่อให้บริการลูกค้าท่านอื่นที่รออยู่" },
             ]
           }
       end
@@ -47,8 +55,11 @@ class QueueUser < ApplicationRecord
     end
 
     def notify_if_queue_called_again
-      if cusStatus == "2"
+      if cusStatus == "2" && callCount < 3
         push_message_calling(customer.uidLine)
+        self.update(callCount: callCount + 1)
+      else
+        puts "Queue is not calling"
       end
     end
 
