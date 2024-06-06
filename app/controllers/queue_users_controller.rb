@@ -82,11 +82,11 @@ class QueueUsersController < ApplicationController
       if queue_u.cusStatus == queue_user_params[:cusStatus] 
         queue_u.notify_if_queue_called_again
         render json:queue_u, status: :ok
-      elsif queue_u.update(queue_user_params) && token_admin
+      elsif queue_u.update(queue_user_params) && token_admin.present?
         ActionCable.server.broadcast('QueueManagmentChannel', {action: 'update', queue: queue_u})
         queue_u.is_admin(true)
         render json:queue_u, status: :ok
-      elsif queue_u.update(queue_user_params) && user
+      elsif queue_u.update(queue_user_params) && user.present?
         queue_u.is_admin(false)
         render json:queue_u, status: :ok
       else
