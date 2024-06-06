@@ -73,10 +73,10 @@ class QueueUsersController < ApplicationController
   def update
     header = request.headers['Authorization']
     token = header.split(' ').last if header
-    # decoded_token = JWT.decode(token, nil, false)
+    decoded_token = JWT.decode(token, nil, false)
     token_admin = Token.find_by(tokenAdmin: token)
-    # uidLine = decoded_token.first['sub']
-    # user = Customer.find_by(uidLine: uidLine)
+    uidLine = decoded_token.first['sub']
+    user = Customer.find_by(uidLine: uidLine)
     queue_u = QueueUser.find_by_id(params[:id])
     if !["0", "3"].include?(queue_u.cusStatus) 
       if queue_u.cusStatus == queue_user_params[:cusStatus] 
@@ -85,6 +85,9 @@ class QueueUsersController < ApplicationController
       elsif queue_u.update(queue_user_params) && token_admin
         ActionCable.server.broadcast('QueueManagmentChannel', {action: 'update', queue: queue_u})
         queue_u.is_admin(true)
+        render json:queue_u, status: :ok
+      elsif queue_u.update(queue_user_params) && user
+        queue_u.is_admin(false)
         render json:queue_u, status: :ok
       else
         render json: queue_u.errors, status: :unprocessable_entity
