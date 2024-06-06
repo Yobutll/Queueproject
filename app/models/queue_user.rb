@@ -17,7 +17,7 @@ class QueueUser < ApplicationRecord
     end
 
     def push_message_calling(uid_Line) 
-      auth_result = authenticate_user_request()   
+      auth_result = authenticate_user_request(token)   
       if cusStatus == "2" && callCount == 0
         message_data = {
           to: customer.uidLine,
