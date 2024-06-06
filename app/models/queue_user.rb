@@ -15,7 +15,7 @@ class QueueUser < ApplicationRecord
     @is_admin = is_admin
    end
 
-    def push_message_calling(uid_Line) 
+    def push_message_calling(uid_Line,is_admin) 
       if cusStatus == "2" && callCount == 0
         message_data = {
           to: customer.uidLine,
@@ -41,7 +41,7 @@ class QueueUser < ApplicationRecord
           }
       end
       if cusStatus == "0"
-        if @is_admin
+        if is_admin
           message_data = {
             to: customer.uidLine,
             messages: [
@@ -52,7 +52,7 @@ class QueueUser < ApplicationRecord
           message_data = {
             to: customer.uidLine,
             messages: [
-                { type: "text", text: "คุณได้ทำการยกเลิกคิวแล้ว \nกรุณากดบัตรคิวหากต้องการดำเนินการใหม่อีกครั้ง #{@is_admin}" },
+                { type: "text", text: "คุณได้ทำการยกเลิกคิวแล้ว \nกรุณากดบัตรคิวหากต้องการดำเนินการใหม่อีกครั้ง" },
               ]
             }
         end
@@ -69,7 +69,7 @@ class QueueUser < ApplicationRecord
 
     def notify_if_queue_called_again
       if cusStatus == "2" && callCount <= 1
-        push_message_calling(customer.uidLine)
+        push_message_calling(customer.uidLine,is_admin)
         self.update(callCount: callCount + 1)
         ActionCable.server.broadcast('QueueManagmentChannel', {action: 'update', queue: self})
       else
@@ -103,12 +103,12 @@ class QueueUser < ApplicationRecord
     end
     
     def notify_if_queue_created
-        push_message_calling(customer.uidLine)
+        push_message_calling(customer.uidLine,is_admin)
     end
     
     def notify_if_status_changed
       if saved_change_to_cusStatus? 
-        push_message_calling(customer.uidLine)
+        push_message_calling(customer.uidLine,is_admin)
       end
     end
    
