@@ -41,7 +41,7 @@ class QueueUser < ApplicationRecord
           }
       end
       if cusStatus == "0"
-        if is_admin
+        if @is_admin
           message_data = {
             to: customer.uidLine,
             messages: [
