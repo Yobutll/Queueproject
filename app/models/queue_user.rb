@@ -11,10 +11,11 @@ class QueueUser < ApplicationRecord
 
     Dotenv.load
 
-   
+   def is_admin(is_admin)
+    @is_admin = is_admin
+   end
 
     def push_message_calling(uid_Line,token) 
-      auth_result = authenticate_user_request(token)   
       if cusStatus == "2" && callCount == 0
         message_data = {
           to: customer.uidLine,
@@ -40,7 +41,7 @@ class QueueUser < ApplicationRecord
           }
       end
       if cusStatus == "0"
-        if auth_result[:token_admin]
+        if is_admin
           message_data = {
             to: customer.uidLine,
             messages: [
