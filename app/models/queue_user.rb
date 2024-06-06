@@ -98,13 +98,7 @@ class QueueUser < ApplicationRecord
         self.qNumber = new_qNumber
       end
     end
-  
-    def reset_qNumber
-      ActiveRecord::Base.transaction do
-        self.qNumber = ''
-        self.save!
-      end
-    end
+
 
     private
     def status_changed_to_3?

@@ -99,6 +99,13 @@ class QueueUsersController < ApplicationController
     end
   end
 
+  def reset_qNumber
+    ActiveRecord::Base.transaction do
+      self.qNumber = ''
+      self.save!
+    end
+  end
+
   # DELETE /queue_users/1
   # DELETE /queue_users/1.json
   def destroy
