@@ -30,9 +30,9 @@ class ApplicationController < ActionController::API
         user_id = user.id
         customer = QueueUser.where(customer_id: user_id).where(cusStatus: ["1", "2"]).first
         if customer.present? 
-            customer.is_admin(false)
+            customer.is_admin(true)
         else
-          
+      
         end
       elsif token_admin
         QueueUser.all.each do |queue_user|
