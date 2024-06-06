@@ -77,16 +77,32 @@ class QueueUser < ApplicationRecord
 
     def set_qNumber
       ActiveRecord::Base.transaction do
-        last_queue_user = QueueUser.order(qNumber: :desc).lock.first
-        new_qNumber = last_queue_user ? last_queue_user.qNumber.next : 'A01'
-        while QueueUser.exists?(qNumber: new_qNumber)
-          if new_qNumber[-2..-1] == '99'
-            new_qNumber = new_qNumber[0].next + '01'
-          else
-            new_qNumber = new_qNumber.next
+        last_queue_user = QueueUser.order(id: :desc).lock.first 
+        if last_queue_user
+          # last_ten_users = QueueUser.order(created_at: :desc).limit(10)
+          # while last_ten_users.exists?(qNumber: new_qNumber)
+          # # increment new_qNumber
+          # end
+          new_qNumber = last_queue_user.qNumber.next
+          last_ten_queue = QueueUser.order(id: :desc).limit(10)
+          while last_ten_queue.exists?(qNumber: new_qNumber)
+            if new_qNumber[-2..-1] == '99'
+              new_qNumber = new_qNumber[0].next + '02'
+            else
+              new_qNumber = new_qNumber.next
+            end
           end
+        else
+          new_qNumber = 'A01'
         end
         self.qNumber = new_qNumber
+      end
+    end
+  
+    def reset_qNumber
+      ActiveRecord::Base.transaction do
+        self.qNumber = ''
+        self.save!
       end
     end
 
