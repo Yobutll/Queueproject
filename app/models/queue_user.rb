@@ -58,6 +58,7 @@ class QueueUser < ApplicationRecord
       if cusStatus == "2" && callCount <= 1
         push_message_calling(customer.uidLine)
         self.update(callCount: callCount + 1)
+        ActionCable.server.broadcast('QueueManagmentChannel', {action: 'update', queue: self})
       else
         puts "Queue is not calling"
       end
