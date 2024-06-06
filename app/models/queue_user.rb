@@ -11,12 +11,9 @@ class QueueUser < ApplicationRecord
 
     Dotenv.load
 
-    def check_token_admin(token)
-      admin_token = Token.find_by(tokenAdmin: token)
-      admin_token.present?
-    end
+   
 
-    def push_message_calling(uid_Line) 
+    def push_message_calling(uid_Line,token) 
       auth_result = authenticate_user_request(token)   
       if cusStatus == "2" && callCount == 0
         message_data = {
@@ -71,7 +68,7 @@ class QueueUser < ApplicationRecord
 
     def notify_if_queue_called_again
       if cusStatus == "2" && callCount <= 1
-        push_message_calling(customer.uidLine)
+        push_message_calling(customer.uidLine, tokenAdmin)
         self.update(callCount: callCount + 1)
         ActionCable.server.broadcast('QueueManagmentChannel', {action: 'update', queue: self})
       else
