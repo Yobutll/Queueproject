@@ -15,7 +15,7 @@ class QueueUser < ApplicationRecord
     @is_admin = is_admin
    end
 
-    def push_message_calling(uid_Line,token) 
+    def push_message_calling(uid_Line) 
       if cusStatus == "2" && callCount == 0
         message_data = {
           to: customer.uidLine,
