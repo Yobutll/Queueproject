@@ -55,7 +55,7 @@ class QueueUser < ApplicationRecord
     end
 
     def notify_if_queue_called_again
-      if cusStatus == "2" && callCount < 3
+      if cusStatus == "2" && callCount <= 2
         push_message_calling(customer.uidLine)
         self.update(callCount: callCount + 1)
       else
