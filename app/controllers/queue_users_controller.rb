@@ -101,7 +101,7 @@ class QueueUsersController < ApplicationController
 
   def reset_qNumber
     ActiveRecord::Base.transaction do
-      self.qNumber = ''
+      self.qNumber = 'A00'
       self.save!
     end
   end
