@@ -35,7 +35,9 @@ class ApplicationController < ActionController::API
           
         end
       elsif token_admin
-        
+        QueueUser.all.each do |queue_user|
+          queue_user.is_admin(true)
+        end
       end 
     else
       render json: { error: 'Not Authorized' }, status: :unauthorized
