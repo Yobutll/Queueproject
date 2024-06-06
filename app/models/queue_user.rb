@@ -8,12 +8,8 @@ class QueueUser < ApplicationRecord
     after_create :notify_if_queue_created
     validates :cusName, presence: true
     validates :cusSeat, presence: true 
-
+    attr_accessor :is_admin
     Dotenv.load
-
-   def is_admin(is_admin)
-    @is_admin = is_admin
-   end
 
     def push_message_calling(uid_Line,is_admin) 
       if cusStatus == "2" && callCount == 0

@@ -84,10 +84,10 @@ class QueueUsersController < ApplicationController
         render json:queue_u, status: :ok
       elsif queue_u.update(queue_user_params) && token_admin.present?
         ActionCable.server.broadcast('QueueManagmentChannel', {action: 'update', queue: queue_u})
-        queue_u.is_admin(true)
+        queue_u.is_admin = true
         render json:queue_u, status: :ok
       elsif queue_u.update(queue_user_params) && user.present?
-        queue_u.is_admin(false)
+        queue_u.is_admin = false
         render json:queue_u, status: :ok
       else
         render json: queue_u.errors, status: :unprocessable_entity
