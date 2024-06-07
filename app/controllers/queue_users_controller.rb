@@ -90,6 +90,7 @@ class QueueUsersController < ApplicationController
       elsif queue_u.update(queue_user_params) && user.present?
         is_admin = false
         queue_u.push_message_calling(queue_u.customer.uidLine, is_admin)
+        ActionCable.server.broadcast('QueueManagmentChannel', {action: 'update', queue: queue_u})
         render json:queue_u, status: :ok
       else
         render json: queue_u.errors, status: :unprocessable_entity
