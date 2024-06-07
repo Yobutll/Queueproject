@@ -80,7 +80,12 @@ class QueueUsersController < ApplicationController
     queue_u = QueueUser.find_by_id(params[:id])
     if !["0", "3"].include?(queue_u.cusStatus) 
       if queue_u.cusStatus == queue_user_params[:cusStatus] 
-        queue_u.notify_if_queue_called_again
+          if queue_u.callCount == 2
+            queue_u.update(checkChangeStatusQueueAfterCalledAgain: true)
+            queue_u.notify_if_queue_called_again
+          else  
+            queue_u.notify_if_queue_called_again
+          end
         render json:queue_u, status: :ok
       elsif queue_u.update(queue_user_params) && token_admin.present?
         ActionCable.server.broadcast('QueueManagmentChannel', {action: 'update', queue: queue_u})
