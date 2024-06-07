@@ -66,6 +66,9 @@ class QueueUser < ApplicationRecord
         push_message_calling(customer.uidLine, false)
         self.update(callCount: callCount + 1)
         ActionCable.server.broadcast('QueueManagmentChannel', {action: 'update', queue: self})
+        if self.callCount == 2
+          self.update(checkChangeStatusQueueAfterCalledAgain: true)
+        end
       else
         puts "Queue is not calling"
       end
