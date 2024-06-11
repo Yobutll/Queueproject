@@ -34,9 +34,9 @@ class WebhooksController < ApplicationController
 
   def client
     @client ||= Line::Bot::Client.new { |config|
-      config.channel_id = ["2005552458"]
-      config.channel_secret = ["a487dc4290f9d2da26f57a4d116e3115"]
-      config.channel_token = ["nhdIYE2t+or1JQxftDXF5hCXKMWz9MaAVZnkK/kdm+MDbyRpuGTvbau7NDpfccrPyiYSPS4Eyb+lZCnyGYCqchJon2uZ6p+6UaxdsIlgh7WiwqGkQvTDwuVABWnMZHK9iDlObuYQiq9TSTxNm6YvSgdB04t89/1O/w1cDnyilFU="]
+      config.channel_id = ["2005597479"]
+      config.channel_secret = ["bc578f2a4ad899fc76f8cc8e646fcdb4"]
+      config.channel_token = ["UZbTzO2gvSYbHSeq1OCoN9bJeGuidmgr5+BQW1m8qU3efbEr1WKblbG90wB9LYl4DPnaybmraOj2jEdWqx2evFO/eLVKFbpPCE+5vP27T9B9AO2oOjyHwRVaUdZCowbDALfqCQOHicM+teIZnSOQJQdB04t89/1O/w1cDnyilFU="]
     }
   end
 
@@ -46,7 +46,7 @@ class WebhooksController < ApplicationController
     received_signature = request.env['HTTP_X_LINE_SIGNATURE']
     
     # Compute HMAC-SHA256 digest
-    digest = OpenSSL::HMAC.digest(OpenSSL::Digest::SHA256.new, "a487dc4290f9d2da26f57a4d116e3115", http_request_body)
+    digest = OpenSSL::HMAC.digest(OpenSSL::Digest::SHA256.new, "bc578f2a4ad899fc76f8cc8e646fcdb4", http_request_body)
     if http_request_body.nil? || http_request_body.empty?
       puts "OK"
       status 200
