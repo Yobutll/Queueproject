@@ -6,6 +6,7 @@ require 'openssl'
 require 'pg'
 require 'faraday'
 require 'json'
+
 class WebhooksController < ApplicationController
   # skip_before_action :verify_authenticity_token
   skip_before_action :authenticate_request , only: [:webhook]

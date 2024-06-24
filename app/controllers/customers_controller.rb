@@ -3,7 +3,7 @@ class CustomersController < ApplicationController
   # GET /customers
   # GET /customers.json
   skip_before_action :authenticate_request , only: [:create, :index, :show, :destroy, :update, :check_token]
-  
+  # GET /customers?uidLine=xxxx
   def index
     uid_line = params[:uidLine]
     customer = Customer.find_by(uidLine: uid_line)
